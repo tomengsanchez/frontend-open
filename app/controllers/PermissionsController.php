@@ -16,46 +16,36 @@ class PermissionsController {
         $this->userModel = new UserModel();
     }
 
+    /**
+     * Display the permissions list page.
+     * This method now fetches data directly based on GET parameters.
+     */
     public function index() {
          if (!$this->userModel->isLoggedIn()) {
             header('Location: /user/login');
             exit;
         }
-        $this->view('permissions/index', ['title' => 'Manage Permissions']);
-    }
 
-    public function permissionsApi() {
-        if (!$this->userModel->isLoggedIn()) {
-            http_response_code(401);
-            echo json_encode(['data' => [], 'recordsTotal' => 0, 'recordsFiltered' => 0, 'draw' => intval($_GET['draw'] ?? 0)]);
-            exit;
-        }
-        header('Content-Type: application/json');
-
-        $draw = intval($_GET['draw'] ?? 0);
+        // Fetch permissions from the model, passing all GET parameters from the URL
         $apiResponseJson = $this->permissionModel->getPermissions($_GET);
         $apiResponseData = json_decode($apiResponseJson, true);
 
-        // Check if the API response is valid and successful
-        if (json_last_error() === JSON_ERROR_NONE && isset($apiResponseData['pagination'])) {
-            $dataTableResponse = [
-                'draw' => $draw,
-                'recordsTotal' => intval($apiResponseData['pagination']['total_records']),
-                'recordsFiltered' => intval($apiResponseData['pagination']['total_records']),
-                'data' => $apiResponseData['data']
-            ];
-            echo json_encode($dataTableResponse);
-        } else {
-            // If the API response is invalid or an error, send a valid but empty response to DataTables.
-            error_log("Permissions API Error or Invalid JSON: " . $apiResponseJson);
-            echo json_encode([
-                'draw' => $draw,
-                'recordsTotal' => 0,
-                'recordsFiltered' => 0,
-                'data' => []
-            ]);
-        }
+        // Prepare data for the view
+        $permissions = $apiResponseData['data'] ?? [];
+        $pagination = $apiResponseData['pagination'] ?? [];
+
+        // Pass the data to the view
+        $this->view('permissions/index', [
+            'title' => 'Manage Permissions',
+            'permissions' => $permissions,
+            'pagination' => $pagination
+        ]);
     }
+
+    /**
+     * The permissionsApi method is no longer needed for client-side pagination
+     * and has been removed.
+     */
 
     public function create() {
         if (!$this->userModel->isLoggedIn() || $_SERVER['REQUEST_METHOD'] !== 'POST') {

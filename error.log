@@ -481,3 +481,57 @@ Stack trace:
 [08-Jul-2025 09:45:17 Europe/Berlin] [VIEW-LAYOUT] Rendering scripts.
 [08-Jul-2025 09:45:17 Europe/Berlin] [VIEW-LAYOUT] Finished rendering main.php layout.
 [08-Jul-2025 09:45:17 Europe/Berlin] [ROUTING] Finished executing method: PermissionsController->index()
+[08-Jul-2025 09:53:01 Europe/Berlin] --- New Request: /permissions ---
+[08-Jul-2025 09:53:01 Europe/Berlin] [ROUTING] Clean route: 'permissions'
+[08-Jul-2025 09:53:01 Europe/Berlin] [ROUTING] Controller: 'PermissionsController', Method: 'index'
+[08-Jul-2025 09:53:01 Europe/Berlin] [ROUTING] Controller file found: D:\xampp\htdocs\openoffice\op-fe/app/controllers/PermissionsController.php
+[08-Jul-2025 09:53:01 Europe/Berlin] [ROUTING] Controller class exists: PermissionsController
+[08-Jul-2025 09:53:01 Europe/Berlin] [ROUTING] Method exists. Calling PermissionsController->index()
+[08-Jul-2025 09:53:01 Europe/Berlin] [VIEW-LAYOUT] Starting main.php layout.
+[08-Jul-2025 09:53:01 Europe/Berlin] [VIEW-LAYOUT] User logged in status: Yes
+[08-Jul-2025 09:53:01 Europe/Berlin] [VIEW-LAYOUT] Head section rendered.
+[08-Jul-2025 09:53:01 Europe/Berlin] [VIEW-LAYOUT] Body section started.
+[08-Jul-2025 09:53:01 Europe/Berlin] [VIEW-LAYOUT] Rendering sidebar.
+[08-Jul-2025 09:53:01 Europe/Berlin] [VIEW-LAYOUT] Sidebar rendered.
+[08-Jul-2025 09:53:01 Europe/Berlin] [VIEW-LAYOUT] Rendering page content wrapper.
+[08-Jul-2025 09:53:01 Europe/Berlin] [VIEW-LAYOUT] Navbar rendered.
+[08-Jul-2025 09:53:01 Europe/Berlin] [VIEW-LAYOUT] Preparing to include specific view: 'permissions/index'
+[08-Jul-2025 09:53:01 Europe/Berlin] [VIEW-LAYOUT] View file found: D:\xampp\htdocs\openoffice\op-fe/app/views/permissions/index.php. Including it now.
+[08-Jul-2025 09:53:01 Europe/Berlin] [VIEW-LAYOUT] Finished including view file: D:\xampp\htdocs\openoffice\op-fe/app/views/permissions/index.php.
+[08-Jul-2025 09:53:01 Europe/Berlin] [VIEW-LAYOUT] Rendering scripts.
+[08-Jul-2025 09:53:01 Europe/Berlin] [VIEW-LAYOUT] Finished rendering main.php layout.
+[08-Jul-2025 09:53:01 Europe/Berlin] [ROUTING] Finished executing method: PermissionsController->index()
+[08-Jul-2025 09:53:01 Europe/Berlin] --- New Request: /permissions/permissionsApi?per_page=10&page=1&search=&sort_by=id&sort_direction=asc&_=1751961181153 ---
+[08-Jul-2025 09:53:01 Europe/Berlin] [ROUTING] Clean route: 'permissions/permissionsApi'
+[08-Jul-2025 09:53:01 Europe/Berlin] [ROUTING] Controller: 'PermissionsController', Method: 'permissionsApi'
+[08-Jul-2025 09:53:01 Europe/Berlin] [ROUTING] Controller file found: D:\xampp\htdocs\openoffice\op-fe/app/controllers/PermissionsController.php
+[08-Jul-2025 09:53:01 Europe/Berlin] [ROUTING] Controller class exists: PermissionsController
+[08-Jul-2025 09:53:01 Europe/Berlin] [ROUTING] Method exists. Calling PermissionsController->permissionsApi()
+[08-Jul-2025 09:53:01 Europe/Berlin] [ROUTING] Finished executing method: PermissionsController->permissionsApi()
+[08-Jul-2025 09:53:04 Europe/Berlin] --- New Request: /permissions ---
+[08-Jul-2025 09:53:04 Europe/Berlin] [ROUTING] Clean route: 'permissions'
+[08-Jul-2025 09:53:04 Europe/Berlin] [ROUTING] Controller: 'PermissionsController', Method: 'index'
+[08-Jul-2025 09:53:04 Europe/Berlin] [ROUTING] Controller file found: D:\xampp\htdocs\openoffice\op-fe/app/controllers/PermissionsController.php
+[08-Jul-2025 09:53:04 Europe/Berlin] [ROUTING] Controller class exists: PermissionsController
+[08-Jul-2025 09:53:04 Europe/Berlin] [ROUTING] Method exists. Calling PermissionsController->index()
+[08-Jul-2025 09:53:04 Europe/Berlin] [VIEW-LAYOUT] Starting main.php layout.
+[08-Jul-2025 09:53:04 Europe/Berlin] [VIEW-LAYOUT] User logged in status: Yes
+[08-Jul-2025 09:53:04 Europe/Berlin] [VIEW-LAYOUT] Head section rendered.
+[08-Jul-2025 09:53:04 Europe/Berlin] [VIEW-LAYOUT] Body section started.
+[08-Jul-2025 09:53:04 Europe/Berlin] [VIEW-LAYOUT] Rendering sidebar.
+[08-Jul-2025 09:53:04 Europe/Berlin] [VIEW-LAYOUT] Sidebar rendered.
+[08-Jul-2025 09:53:04 Europe/Berlin] [VIEW-LAYOUT] Rendering page content wrapper.
+[08-Jul-2025 09:53:04 Europe/Berlin] [VIEW-LAYOUT] Navbar rendered.
+[08-Jul-2025 09:53:04 Europe/Berlin] [VIEW-LAYOUT] Preparing to include specific view: 'permissions/index'
+[08-Jul-2025 09:53:04 Europe/Berlin] [VIEW-LAYOUT] View file found: D:\xampp\htdocs\openoffice\op-fe/app/views/permissions/index.php. Including it now.
+[08-Jul-2025 09:53:04 Europe/Berlin] [VIEW-LAYOUT] Finished including view file: D:\xampp\htdocs\openoffice\op-fe/app/views/permissions/index.php.
+[08-Jul-2025 09:53:04 Europe/Berlin] [VIEW-LAYOUT] Rendering scripts.
+[08-Jul-2025 09:53:04 Europe/Berlin] [VIEW-LAYOUT] Finished rendering main.php layout.
+[08-Jul-2025 09:53:04 Europe/Berlin] [ROUTING] Finished executing method: PermissionsController->index()
+[08-Jul-2025 09:53:04 Europe/Berlin] --- New Request: /permissions/permissionsApi?per_page=10&page=1&search=&sort_by=id&sort_direction=asc&_=1751961184711 ---
+[08-Jul-2025 09:53:04 Europe/Berlin] [ROUTING] Clean route: 'permissions/permissionsApi'
+[08-Jul-2025 09:53:04 Europe/Berlin] [ROUTING] Controller: 'PermissionsController', Method: 'permissionsApi'
+[08-Jul-2025 09:53:04 Europe/Berlin] [ROUTING] Controller file found: D:\xampp\htdocs\openoffice\op-fe/app/controllers/PermissionsController.php
+[08-Jul-2025 09:53:04 Europe/Berlin] [ROUTING] Controller class exists: PermissionsController
+[08-Jul-2025 09:53:04 Europe/Berlin] [ROUTING] Method exists. Calling PermissionsController->permissionsApi()
+[08-Jul-2025 09:53:04 Europe/Berlin] [ROUTING] Finished executing method: PermissionsController->permissionsApi()

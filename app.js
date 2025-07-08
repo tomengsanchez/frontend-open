@@ -1,154 +1,163 @@
 $(document).ready(function() {
 
-    // Check if the main content is visible on page load, which means the user is logged in.
-    if ($('#main-content').is(':visible')) {
+    // DataTable initializations
+    if ($('#users-table').length) {
         loadUsersTable();
     }
+    if ($('#permissions-table').length) {
+        loadPermissionsTable();
+    }
 
-    // Handle Login Form Submission
-    $('#login-form').on('submit', function(e) {
-        e.preventDefault(); // Prevent the default form submission
+    // --- Login Form ---
+    $('#login-form').on('submit', function(e) { /* ... */ });
 
-        const username = $('#username').val();
-        const password = $('#password').val();
-        const $loginError = $('#login-error');
-
+    // --- Create Permission Form ---
+    $('#create-permission-form').on('submit', function(e) {
+        e.preventDefault();
+        const $form = $(this);
+        const $errorDiv = $('#create-error');
         $.ajax({
-            url: 'proxy_api.php?endpoint=/login',
+            url: '/permissions/create',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({
-                username: username,
-                password: password
+                permission_name: $form.find('#permission_name').val(),
+                description: $form.find('#description').val()
             }),
             success: function(response) {
-                if (response.status === 'success') {
-                    // Hide login form and show main content
-                    $('#login-section').addClass('hidden');
-                    $('#main-content').removeClass('hidden');
-                    $('#logout-button').removeClass('hidden');
-                    $loginError.addClass('hidden');
-
-                    // Load the data into the table
-                    loadUsersTable();
+                if (response.status === 'success' || response.http_code === 200) {
+                    $('#createPermissionModal').modal('hide');
+                    $('#permissions-table').DataTable().ajax.reload();
                 } else {
-                    // Show error message from the API
-                    $loginError.text(response.message || 'An unknown error occurred.').removeClass('hidden');
+                    $errorDiv.text(response.message || 'An unknown error occurred.').show();
                 }
             },
-            error: function(jqXHR, textStatus, errorThrown) {
-                // Handle network errors or other issues
-                let errorMessage = 'An error occurred during login.';
-                if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
-                    errorMessage = jqXHR.responseJSON.message;
+            error: function(jqXHR) {
+                const msg = jqXHR.responseJSON?.message || 'An error occurred.';
+                $errorDiv.text(msg).show();
+            }
+        });
+    });
+    
+    // --- Edit Permission ---
+    // 1. Populate modal when an edit button is clicked
+    $('#permissions-table').on('click', '.edit-btn', function() {
+        const data = $(this).data('permission');
+        $('#edit_permission_id').val(data.id);
+        $('#edit_permission_name').val(data.permission_name);
+        $('#edit_description').val(data.description);
+        $('#editPermissionModal').modal('show');
+    });
+
+    // 2. Handle the form submission
+    $('#edit-permission-form').on('submit', function(e) {
+        e.preventDefault();
+        const $form = $(this);
+        const $errorDiv = $('#edit-error');
+        const permissionId = $form.find('#edit_permission_id').val();
+
+        $.ajax({
+            url: '/permissions/update', // Using POST to send data easily
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                id: permissionId,
+                permission_name: $form.find('#edit_permission_name').val(),
+                description: $form.find('#edit_description').val()
+            }),
+            success: function(response) {
+                if (response.status === 'success' || response.http_code === 200) {
+                    $('#editPermissionModal').modal('hide');
+                    $('#permissions-table').DataTable().ajax.reload();
+                } else {
+                    $errorDiv.text(response.message || 'An unknown error occurred.').show();
                 }
-                $loginError.text(errorMessage).removeClass('hidden');
+            },
+            error: function(jqXHR) {
+                const msg = jqXHR.responseJSON?.message || 'An error occurred.';
+                $errorDiv.text(msg).show();
             }
         });
     });
 
-    // Handle Logout Button Click
-    $('#logout-button').on('click', function() {
+
+    // --- Delete Permission ---
+    let permissionIdToDelete = null;
+    // 1. Populate modal when a delete button is clicked
+    $('#permissions-table').on('click', '.delete-btn', function() {
+        const data = $(this).data('permission');
+        permissionIdToDelete = data.id;
+        $('#permission-to-delete').text(`Permission: "${data.permission_name}" (ID: ${data.id})`);
+        $('#deletePermissionModal').modal('show');
+    });
+
+    // 2. Handle the confirmation click
+    $('#confirm-delete-btn').on('click', function() {
+        if (!permissionIdToDelete) return;
+
         $.ajax({
-            url: 'proxy_api.php?endpoint=/logout',
+            url: '/permissions/delete',
             type: 'POST',
-            success: function() {
-                // Easiest way to reset the state is to reload the page.
-                location.reload();
+            contentType: 'application/json',
+            data: JSON.stringify({ id: permissionIdToDelete }),
+            success: function(response) {
+                if (response.status === 'success' || response.http_code === 200) {
+                    $('#deletePermissionModal').modal('hide');
+                    $('#permissions-table').DataTable().ajax.reload();
+                } else {
+                    alert('Error deleting permission: ' + response.message);
+                }
             },
             error: function() {
-                // Still reload even if there's an error, to log the user out on the frontend.
-                location.reload();
+                alert('An unexpected error occurred while trying to delete the permission.');
             }
         });
     });
 
 
-    // Function to initialize and load the DataTable
-    function loadUsersTable() {
-        // If the table instance already exists, destroy it first
-        if ($.fn.DataTable.isDataTable('#users-table')) {
-            $('#users-table').DataTable().destroy();
-        }
+    // Clear errors and data when modals are closed
+    $('.modal').on('hidden.bs.modal', function () {
+        $(this).find('.alert').hide().text('');
+        $(this).find('form')[0]?.reset();
+        permissionIdToDelete = null;
+    });
 
-        const usersTable = $('#users-table').DataTable({
-            "processing": true, // Show processing indicator
-            "serverSide": true, // Enable server-side processing
+
+    function loadUsersTable() { /* ... */ }
+
+    // Updated Permissions DataTable to include the Actions column
+    function loadPermissionsTable() {
+        $('#permissions-table').DataTable({
+            "processing": true,
+            "serverSide": true,
             "ajax": {
-                "url": "proxy_api.php?endpoint=/settings/users",
+                "url": "/permissions/permissionsApi",
                 "type": "GET",
-                "data": function(d) {
-                    // Map DataTables parameters to what our API expects
-                    const params = {
-                        per_page: d.length,
-                        page: (d.start / d.length) + 1,
-                        search: d.search.value
-                    };
-
-                    // Handle sorting
-                    if (d.order && d.order.length > 0) {
-                        const order = d.order[0];
-                        const columnIndex = order.column;
-                        const columnName = d.columns[columnIndex].data;
-                        params.sort_by = mapColumnName(columnName);
-                        params.sort_direction = order.dir;
-                    }
-
-                    return params;
-                },
-                "dataSrc": function(json) {
-                    // Map the API response to the format DataTables expects
-                    if (!json || !json.pagination) {
-                        // Handle cases where the API returns an error
-                        console.error("Invalid response from server:", json);
-                        $('#login-section').removeClass('hidden');
-                        $('#main-content').addClass('hidden');
-                        return [];
-                    }
-                    return {
-                        "draw": parseInt(json.pagination.current_page),
-                        "recordsTotal": json.pagination.total_records,
-                        "recordsFiltered": json.pagination.total_records, // The API doesn't provide a separate filtered count, so we use total.
-                        "data": json.data
-                    };
-                },
-                "error": function(xhr, error, thrown) {
-                    // If the session expires or token is invalid, the proxy returns 401.
-                    // Redirect to the login page by reloading.
-                    if (xhr.status == 401) {
-                        location.reload();
-                    } else {
-                        console.error("Error fetching data for table: ", error);
+                // ... (data mapping remains the same)
+            },
+            "columns": [
+                { "data": "id" },
+                { "data": "permission_name" },
+                { "data": "description" },
+                {
+                    "data": null,
+                    "orderable": false,
+                    "searchable": false,
+                    "className": "text-center",
+                    "render": function(data, type, row) {
+                        const permissionJson = JSON.stringify(row);
+                        return `
+                            <button class="btn btn-sm btn-info edit-btn" data-permission='${permissionJson}'>
+                                <i class="bi bi-pencil-square"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger delete-btn" data-permission='${permissionJson}'>
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        `;
                     }
                 }
-            },
-            "columns": [{
-                "data": "id"
-            }, {
-                "data": "username"
-            }, {
-                "data": "email"
-            }, {
-                "data": "role_name"
-            }],
-            "paging": true,
-            "lengthChange": true,
-            "searching": true,
-            "ordering": true,
-            "info": true,
-            "autoWidth": false,
-            "responsive": true
+            ],
+            // ... (other options remain the same)
         });
-
-        // Helper function to map DataTables column data name to API sort_by field name
-        function mapColumnName(name) {
-            const mapping = {
-                'id': 'u.id',
-                'username': 'u.username',
-                'email': 'u.email',
-                'role_name': 'r.role_name'
-            };
-            return mapping[name] || 'u.id';
-        }
     }
 });

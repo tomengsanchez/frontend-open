@@ -1,6 +1,6 @@
 <?php
 // app/controllers/DashboardController.php
-
+require_once BASE_PATH . '/app/helpers/ApiHelper.php';
 require_once BASE_PATH . '/app/models/UserModel.php';
 
 class DashboardController {

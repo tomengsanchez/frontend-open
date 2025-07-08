@@ -1,6 +1,8 @@
 <?php
 // app/controllers/UserController.php
 
+// Require the helper first, as the model depends on it.
+require_once BASE_PATH . '/app/helpers/ApiHelper.php';
 require_once BASE_PATH . '/app/models/UserModel.php';
 
 class UserController {
@@ -74,12 +76,7 @@ class UserController {
         header('Content-Type: application/json');
         // Forward query parameters from DataTables to the model
         $response = $this->userModel->getUsers($_GET);
-        // If token is invalid, API might return 401, handle it
-        $data = json_decode($response, true);
-        if (isset($data['http_code']) && $data['http_code'] == 401) {
-             $this->userModel->logout();
-        }
-        echo $response; // The model returns a JSON string from the API
+        echo $response;
     }
 
 

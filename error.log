@@ -348,3 +348,136 @@ Stack trace:
 #1 D:\xampp\htdocs\openoffice\op-fe\index.php(59): UserController->handleLogin()
 #2 {main}
   thrown in D:\xampp\htdocs\openoffice\op-fe\app\models\UserModel.php on line 12
+[08-Jul-2025 09:44:54 Europe/Berlin] --- New Request: /user/login ---
+[08-Jul-2025 09:44:54 Europe/Berlin] [ROUTING] Clean route: 'user/login'
+[08-Jul-2025 09:44:54 Europe/Berlin] [ROUTING] Controller: 'UserController', Method: 'login'
+[08-Jul-2025 09:44:54 Europe/Berlin] [ROUTING] Controller file found: D:\xampp\htdocs\openoffice\op-fe/app/controllers/UserController.php
+[08-Jul-2025 09:44:54 Europe/Berlin] [ROUTING] Controller class exists: UserController
+[08-Jul-2025 09:44:54 Europe/Berlin] [ROUTING] Method exists. Calling UserController->login()
+[08-Jul-2025 09:44:54 Europe/Berlin] [ROUTING] Finished executing method: UserController->login()
+[08-Jul-2025 09:44:55 Europe/Berlin] --- New Request: /user/handleLogin ---
+[08-Jul-2025 09:44:55 Europe/Berlin] [ROUTING] Clean route: 'user/handleLogin'
+[08-Jul-2025 09:44:55 Europe/Berlin] [ROUTING] Controller: 'UserController', Method: 'handleLogin'
+[08-Jul-2025 09:44:55 Europe/Berlin] [ROUTING] Controller file found: D:\xampp\htdocs\openoffice\op-fe/app/controllers/UserController.php
+[08-Jul-2025 09:44:55 Europe/Berlin] [ROUTING] Controller class exists: UserController
+[08-Jul-2025 09:44:55 Europe/Berlin] [ROUTING] Method exists. Calling UserController->handleLogin()
+[08-Jul-2025 09:44:55 Europe/Berlin] [ROUTING] Finished executing method: UserController->handleLogin()
+[08-Jul-2025 09:44:55 Europe/Berlin] --- New Request: /dashboard ---
+[08-Jul-2025 09:44:55 Europe/Berlin] [ROUTING] Clean route: 'dashboard'
+[08-Jul-2025 09:44:55 Europe/Berlin] [ROUTING] Controller: 'DashboardController', Method: 'index'
+[08-Jul-2025 09:44:55 Europe/Berlin] [ROUTING] Controller file found: D:\xampp\htdocs\openoffice\op-fe/app/controllers/DashboardController.php
+[08-Jul-2025 09:44:55 Europe/Berlin] [ROUTING] Controller class exists: DashboardController
+[08-Jul-2025 09:44:55 Europe/Berlin] [ROUTING] Method exists. Calling DashboardController->index()
+[08-Jul-2025 09:44:55 Europe/Berlin] [CONTROLLER] Inside DashboardController->index()
+[08-Jul-2025 09:44:55 Europe/Berlin] [CONTROLLER] User is logged in. Calling view method to render 'dashboard/index'.
+[08-Jul-2025 09:44:55 Europe/Berlin] [VIEW] Inside view method for 'dashboard/index'.
+[08-Jul-2025 09:44:55 Europe/Berlin] [VIEW] Preparing to load layout file: D:\xampp\htdocs\openoffice\op-fe/app/views/layouts/main.php
+[08-Jul-2025 09:44:55 Europe/Berlin] [VIEW] Layout file found. Requiring it now.
+[08-Jul-2025 09:44:55 Europe/Berlin] [VIEW-LAYOUT] Starting main.php layout.
+[08-Jul-2025 09:44:55 Europe/Berlin] [VIEW-LAYOUT] User logged in status: Yes
+[08-Jul-2025 09:44:55 Europe/Berlin] [VIEW-LAYOUT] Head section rendered.
+[08-Jul-2025 09:44:55 Europe/Berlin] [VIEW-LAYOUT] Body section started.
+[08-Jul-2025 09:44:55 Europe/Berlin] [VIEW-LAYOUT] Rendering sidebar.
+[08-Jul-2025 09:44:55 Europe/Berlin] [VIEW-LAYOUT] Sidebar rendered.
+[08-Jul-2025 09:44:55 Europe/Berlin] [VIEW-LAYOUT] Rendering page content wrapper.
+[08-Jul-2025 09:44:55 Europe/Berlin] [VIEW-LAYOUT] Navbar rendered.
+[08-Jul-2025 09:44:55 Europe/Berlin] [VIEW-LAYOUT] Preparing to include specific view: 'dashboard/index'
+[08-Jul-2025 09:44:55 Europe/Berlin] [VIEW-LAYOUT] View file found: D:\xampp\htdocs\openoffice\op-fe/app/views/dashboard/index.php. Including it now.
+[08-Jul-2025 09:44:55 Europe/Berlin] [VIEW-LAYOUT] Finished including view file: D:\xampp\htdocs\openoffice\op-fe/app/views/dashboard/index.php.
+[08-Jul-2025 09:44:55 Europe/Berlin] [VIEW-LAYOUT] Rendering scripts.
+[08-Jul-2025 09:44:55 Europe/Berlin] [VIEW-LAYOUT] Finished rendering main.php layout.
+[08-Jul-2025 09:44:55 Europe/Berlin] [VIEW] Finished requiring layout file.
+[08-Jul-2025 09:44:55 Europe/Berlin] [ROUTING] Finished executing method: DashboardController->index()
+[08-Jul-2025 09:45:06 Europe/Berlin] --- New Request: /user/logout ---
+[08-Jul-2025 09:45:06 Europe/Berlin] [ROUTING] Clean route: 'user/logout'
+[08-Jul-2025 09:45:06 Europe/Berlin] [ROUTING] Controller: 'UserController', Method: 'logout'
+[08-Jul-2025 09:45:06 Europe/Berlin] [ROUTING] Controller file found: D:\xampp\htdocs\openoffice\op-fe/app/controllers/UserController.php
+[08-Jul-2025 09:45:06 Europe/Berlin] [ROUTING] Controller class exists: UserController
+[08-Jul-2025 09:45:06 Europe/Berlin] [ROUTING] Method exists. Calling UserController->logout()
+[08-Jul-2025 09:45:06 Europe/Berlin] --- New Request: /user/login ---
+[08-Jul-2025 09:45:06 Europe/Berlin] [ROUTING] Clean route: 'user/login'
+[08-Jul-2025 09:45:06 Europe/Berlin] [ROUTING] Controller: 'UserController', Method: 'login'
+[08-Jul-2025 09:45:06 Europe/Berlin] [ROUTING] Controller file found: D:\xampp\htdocs\openoffice\op-fe/app/controllers/UserController.php
+[08-Jul-2025 09:45:06 Europe/Berlin] [ROUTING] Controller class exists: UserController
+[08-Jul-2025 09:45:06 Europe/Berlin] [ROUTING] Method exists. Calling UserController->login()
+[08-Jul-2025 09:45:06 Europe/Berlin] [ROUTING] Finished executing method: UserController->login()
+[08-Jul-2025 09:45:07 Europe/Berlin] --- New Request: /user/handleLogin ---
+[08-Jul-2025 09:45:07 Europe/Berlin] [ROUTING] Clean route: 'user/handleLogin'
+[08-Jul-2025 09:45:07 Europe/Berlin] [ROUTING] Controller: 'UserController', Method: 'handleLogin'
+[08-Jul-2025 09:45:07 Europe/Berlin] [ROUTING] Controller file found: D:\xampp\htdocs\openoffice\op-fe/app/controllers/UserController.php
+[08-Jul-2025 09:45:07 Europe/Berlin] [ROUTING] Controller class exists: UserController
+[08-Jul-2025 09:45:07 Europe/Berlin] [ROUTING] Method exists. Calling UserController->handleLogin()
+[08-Jul-2025 09:45:07 Europe/Berlin] [ROUTING] Finished executing method: UserController->handleLogin()
+[08-Jul-2025 09:45:07 Europe/Berlin] --- New Request: /dashboard ---
+[08-Jul-2025 09:45:07 Europe/Berlin] [ROUTING] Clean route: 'dashboard'
+[08-Jul-2025 09:45:07 Europe/Berlin] [ROUTING] Controller: 'DashboardController', Method: 'index'
+[08-Jul-2025 09:45:07 Europe/Berlin] [ROUTING] Controller file found: D:\xampp\htdocs\openoffice\op-fe/app/controllers/DashboardController.php
+[08-Jul-2025 09:45:07 Europe/Berlin] [ROUTING] Controller class exists: DashboardController
+[08-Jul-2025 09:45:07 Europe/Berlin] [ROUTING] Method exists. Calling DashboardController->index()
+[08-Jul-2025 09:45:07 Europe/Berlin] [CONTROLLER] Inside DashboardController->index()
+[08-Jul-2025 09:45:07 Europe/Berlin] [CONTROLLER] User is logged in. Calling view method to render 'dashboard/index'.
+[08-Jul-2025 09:45:07 Europe/Berlin] [VIEW] Inside view method for 'dashboard/index'.
+[08-Jul-2025 09:45:07 Europe/Berlin] [VIEW] Preparing to load layout file: D:\xampp\htdocs\openoffice\op-fe/app/views/layouts/main.php
+[08-Jul-2025 09:45:07 Europe/Berlin] [VIEW] Layout file found. Requiring it now.
+[08-Jul-2025 09:45:07 Europe/Berlin] [VIEW-LAYOUT] Starting main.php layout.
+[08-Jul-2025 09:45:07 Europe/Berlin] [VIEW-LAYOUT] User logged in status: Yes
+[08-Jul-2025 09:45:07 Europe/Berlin] [VIEW-LAYOUT] Head section rendered.
+[08-Jul-2025 09:45:07 Europe/Berlin] [VIEW-LAYOUT] Body section started.
+[08-Jul-2025 09:45:07 Europe/Berlin] [VIEW-LAYOUT] Rendering sidebar.
+[08-Jul-2025 09:45:07 Europe/Berlin] [VIEW-LAYOUT] Sidebar rendered.
+[08-Jul-2025 09:45:07 Europe/Berlin] [VIEW-LAYOUT] Rendering page content wrapper.
+[08-Jul-2025 09:45:07 Europe/Berlin] [VIEW-LAYOUT] Navbar rendered.
+[08-Jul-2025 09:45:07 Europe/Berlin] [VIEW-LAYOUT] Preparing to include specific view: 'dashboard/index'
+[08-Jul-2025 09:45:07 Europe/Berlin] [VIEW-LAYOUT] View file found: D:\xampp\htdocs\openoffice\op-fe/app/views/dashboard/index.php. Including it now.
+[08-Jul-2025 09:45:07 Europe/Berlin] [VIEW-LAYOUT] Finished including view file: D:\xampp\htdocs\openoffice\op-fe/app/views/dashboard/index.php.
+[08-Jul-2025 09:45:07 Europe/Berlin] [VIEW-LAYOUT] Rendering scripts.
+[08-Jul-2025 09:45:07 Europe/Berlin] [VIEW-LAYOUT] Finished rendering main.php layout.
+[08-Jul-2025 09:45:07 Europe/Berlin] [VIEW] Finished requiring layout file.
+[08-Jul-2025 09:45:07 Europe/Berlin] [ROUTING] Finished executing method: DashboardController->index()
+[08-Jul-2025 09:45:09 Europe/Berlin] --- New Request: /user/list ---
+[08-Jul-2025 09:45:09 Europe/Berlin] [ROUTING] Clean route: 'user/list'
+[08-Jul-2025 09:45:09 Europe/Berlin] [ROUTING] Controller: 'UserController', Method: 'list'
+[08-Jul-2025 09:45:09 Europe/Berlin] [ROUTING] Controller file found: D:\xampp\htdocs\openoffice\op-fe/app/controllers/UserController.php
+[08-Jul-2025 09:45:09 Europe/Berlin] [ROUTING] Controller class exists: UserController
+[08-Jul-2025 09:45:09 Europe/Berlin] [ROUTING] Method exists. Calling UserController->list()
+[08-Jul-2025 09:45:09 Europe/Berlin] [VIEW-LAYOUT] Starting main.php layout.
+[08-Jul-2025 09:45:09 Europe/Berlin] [VIEW-LAYOUT] User logged in status: Yes
+[08-Jul-2025 09:45:09 Europe/Berlin] [VIEW-LAYOUT] Head section rendered.
+[08-Jul-2025 09:45:09 Europe/Berlin] [VIEW-LAYOUT] Body section started.
+[08-Jul-2025 09:45:09 Europe/Berlin] [VIEW-LAYOUT] Rendering sidebar.
+[08-Jul-2025 09:45:09 Europe/Berlin] [VIEW-LAYOUT] Sidebar rendered.
+[08-Jul-2025 09:45:09 Europe/Berlin] [VIEW-LAYOUT] Rendering page content wrapper.
+[08-Jul-2025 09:45:09 Europe/Berlin] [VIEW-LAYOUT] Navbar rendered.
+[08-Jul-2025 09:45:09 Europe/Berlin] [VIEW-LAYOUT] Preparing to include specific view: 'users/list'
+[08-Jul-2025 09:45:09 Europe/Berlin] [VIEW-LAYOUT] View file found: D:\xampp\htdocs\openoffice\op-fe/app/views/users/list.php. Including it now.
+[08-Jul-2025 09:45:09 Europe/Berlin] [VIEW-LAYOUT] Finished including view file: D:\xampp\htdocs\openoffice\op-fe/app/views/users/list.php.
+[08-Jul-2025 09:45:09 Europe/Berlin] [VIEW-LAYOUT] Rendering scripts.
+[08-Jul-2025 09:45:09 Europe/Berlin] [VIEW-LAYOUT] Finished rendering main.php layout.
+[08-Jul-2025 09:45:09 Europe/Berlin] [ROUTING] Finished executing method: UserController->list()
+[08-Jul-2025 09:45:09 Europe/Berlin] --- New Request: /user/usersApi?per_page=10&page=1&search=&sort_by=u.id&sort_direction=asc&_=1751960709543 ---
+[08-Jul-2025 09:45:09 Europe/Berlin] [ROUTING] Clean route: 'user/usersApi'
+[08-Jul-2025 09:45:09 Europe/Berlin] [ROUTING] Controller: 'UserController', Method: 'usersApi'
+[08-Jul-2025 09:45:09 Europe/Berlin] [ROUTING] Controller file found: D:\xampp\htdocs\openoffice\op-fe/app/controllers/UserController.php
+[08-Jul-2025 09:45:09 Europe/Berlin] [ROUTING] Controller class exists: UserController
+[08-Jul-2025 09:45:09 Europe/Berlin] [ROUTING] Method exists. Calling UserController->usersApi()
+[08-Jul-2025 09:45:09 Europe/Berlin] [ROUTING] Finished executing method: UserController->usersApi()
+[08-Jul-2025 09:45:17 Europe/Berlin] --- New Request: /permissions ---
+[08-Jul-2025 09:45:17 Europe/Berlin] [ROUTING] Clean route: 'permissions'
+[08-Jul-2025 09:45:17 Europe/Berlin] [ROUTING] Controller: 'PermissionsController', Method: 'index'
+[08-Jul-2025 09:45:17 Europe/Berlin] [ROUTING] Controller file found: D:\xampp\htdocs\openoffice\op-fe/app/controllers/PermissionsController.php
+[08-Jul-2025 09:45:17 Europe/Berlin] [ROUTING] Controller class exists: PermissionsController
+[08-Jul-2025 09:45:17 Europe/Berlin] [ROUTING] Method exists. Calling PermissionsController->index()
+[08-Jul-2025 09:45:17 Europe/Berlin] [VIEW-LAYOUT] Starting main.php layout.
+[08-Jul-2025 09:45:17 Europe/Berlin] [VIEW-LAYOUT] User logged in status: Yes
+[08-Jul-2025 09:45:17 Europe/Berlin] [VIEW-LAYOUT] Head section rendered.
+[08-Jul-2025 09:45:17 Europe/Berlin] [VIEW-LAYOUT] Body section started.
+[08-Jul-2025 09:45:17 Europe/Berlin] [VIEW-LAYOUT] Rendering sidebar.
+[08-Jul-2025 09:45:17 Europe/Berlin] [VIEW-LAYOUT] Sidebar rendered.
+[08-Jul-2025 09:45:17 Europe/Berlin] [VIEW-LAYOUT] Rendering page content wrapper.
+[08-Jul-2025 09:45:17 Europe/Berlin] [VIEW-LAYOUT] Navbar rendered.
+[08-Jul-2025 09:45:17 Europe/Berlin] [VIEW-LAYOUT] Preparing to include specific view: 'permissions/index'
+[08-Jul-2025 09:45:17 Europe/Berlin] [VIEW-LAYOUT] View file found: D:\xampp\htdocs\openoffice\op-fe/app/views/permissions/index.php. Including it now.
+[08-Jul-2025 09:45:17 Europe/Berlin] [VIEW-LAYOUT] Finished including view file: D:\xampp\htdocs\openoffice\op-fe/app/views/permissions/index.php.
+[08-Jul-2025 09:45:17 Europe/Berlin] [VIEW-LAYOUT] Rendering scripts.
+[08-Jul-2025 09:45:17 Europe/Berlin] [VIEW-LAYOUT] Finished rendering main.php layout.
+[08-Jul-2025 09:45:17 Europe/Berlin] [ROUTING] Finished executing method: PermissionsController->index()

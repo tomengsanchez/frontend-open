@@ -1,12 +1,10 @@
 <?php 
 
 require_once BASE_PATH . '/app/helpers/ApiHelper.php';
-require_once BASE_PATH . '/app/models/RoleModel.php';
 
-
-class RolesController {
+class PermissionsController {
     public function index() {
-        $this->view('roles/index', ['title' => 'Manage Roles']);
+        $this->view('permissions/index', ['title' => 'Manage Permissions']);
     }
 
     protected function view($viewName, $data = []) {

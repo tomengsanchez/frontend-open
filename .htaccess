@@ -8,7 +8,9 @@
     RewriteRule ^(.*)/$ /$1 [L,R=301]
 
     # Handle Front Controller...
+    # The [QSA] flag is crucial. It appends the query string from the
+    # original request (like ?draw=1&start=0...) to the rewritten URL.
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^ index.php [L]
+    RewriteRule ^ index.php [QSA,L]
 </IfModule>

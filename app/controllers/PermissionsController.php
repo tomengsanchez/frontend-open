@@ -17,7 +17,7 @@ class PermissionsController {
     }
 
     /**
-     * Display the permissions list page.
+     * Display the permissions list page (handles GET requests).
      */
     public function index() {
          if (!$this->userModel->isLoggedIn()) {
@@ -39,36 +39,70 @@ class PermissionsController {
     }
 
     /**
-     * Handle the creation of a new permission from the modal (AJAX).
+     * Show the form for creating a new permission (handles GET requests).
      */
     public function create() {
-        if (!$this->userModel->isLoggedIn() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+            http_response_code(405); // Method Not Allowed
+            echo "This page should only be accessed via GET.";
+            exit;
+        }
+        if (!$this->userModel->isLoggedIn()) {
+            header('Location: /user/login');
+            exit;
+        }
+        $this->view('permissions/create', ['title' => 'Create New Permission']);
+    }
+
+    /**
+     * Store a newly created permission (handles POST requests).
+     */
+    public function store() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405); // Method Not Allowed
+            echo "This action requires a POST request.";
+            exit;
+        }
+        if (!$this->userModel->isLoggedIn()) {
             http_response_code(403);
-            echo json_encode(['status' => 'error', 'message' => 'Forbidden']);
+            echo "Forbidden: You must be logged in.";
             exit;
         }
 
-        header('Content-Type: application/json');
-        $data = json_decode(file_get_contents('php://input'), true);
-
-        $name = $data['permission_name'] ?? '';
-        $description = $data['description'] ?? '';
+        $name = $_POST['permission_name'] ?? '';
+        $description = $_POST['description'] ?? '';
 
         if (empty($name)) {
-            http_response_code(400);
-            echo json_encode(['status' => 'error', 'message' => 'Permission name is required.']);
+            $_SESSION['error_message'] = 'Permission name is required.';
+            header('Location: /permissions/create');
             exit;
         }
 
         $response = $this->permissionModel->createPermission($name, $description);
-        echo json_encode($response);
+
+        if (isset($response['status']) && $response['status'] === 'success') {
+            $_SESSION['success_message'] = 'Permission created successfully!';
+            header('Location: /permissions');
+        } else {
+            $_SESSION['error_message'] = $response['message'] ?? 'An unknown error occurred during creation.';
+            header('Location: /permissions/create');
+        }
+        exit;
     }
 
 
+    /**
+     * Handle AJAX request to update a permission.
+     */
     public function update() {
-        if (!$this->userModel->isLoggedIn() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+             http_response_code(405);
+             echo json_encode(['status' => 'error', 'message' => 'Update requires POST.']);
+             exit;
+        }
+        if (!$this->userModel->isLoggedIn()) {
             http_response_code(403);
-            echo json_encode(['status' => 'error', 'message' => 'Forbidden']);
+            echo json_encode(['status' => 'error', 'message' => 'Forbidden: Not logged in.']);
             exit;
         }
 
@@ -80,7 +114,7 @@ class PermissionsController {
 
         if (empty($id) || empty($name)) {
             http_response_code(400);
-            echo json_encode(['status' => 'error', 'message' => 'ID and Permission name are required.']);
+            echo json_encode(['status' => 'error', 'message' => 'ID and Permission name are required for update.']);
             exit;
         }
 
@@ -88,10 +122,18 @@ class PermissionsController {
         echo json_encode($response);
     }
 
+    /**
+     * Handle AJAX request to delete a permission.
+     */
     public function delete() {
-         if (!$this->userModel->isLoggedIn() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['status' => 'error', 'message' => 'Delete requires POST.']);
+            exit;
+        }
+        if (!$this->userModel->isLoggedIn()) {
             http_response_code(403);
-            echo json_encode(['status' => 'error', 'message' => 'Forbidden']);
+            echo json_encode(['status' => 'error', 'message' => 'Forbidden: Not logged in.']);
             exit;
         }
 
@@ -101,7 +143,7 @@ class PermissionsController {
 
         if (empty($id)) {
             http_response_code(400);
-            echo json_encode(['status' => 'error', 'message' => 'Permission ID is required.']);
+            echo json_encode(['status' => 'error', 'message' => 'Permission ID is required for deletion.']);
             exit;
         }
 

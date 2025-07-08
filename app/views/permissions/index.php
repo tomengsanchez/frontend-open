@@ -2,12 +2,9 @@
 // app/views/permissions/index.php
 
 // Helper function to build query strings for sorting and pagination links
-function build_query_string($new_params) {
-    // Start with the existing GET parameters
+function build_permission_query_string($new_params) {
     $current_params = $_GET;
-    // Merge new parameters, overwriting existing ones if necessary
     $merged_params = array_merge($current_params, $new_params);
-    // Build and return the query string
     return http_build_query($merged_params);
 }
 
@@ -15,6 +12,7 @@ function build_query_string($new_params) {
 $current_sort_by = $_GET['sort_by'] ?? 'id';
 $current_sort_direction = $_GET['sort_direction'] ?? 'asc';
 $current_search = $_GET['search'] ?? '';
+$current_per_page = $_GET['per_page'] ?? 10;
 
 ?>
 
@@ -54,13 +52,13 @@ $current_search = $_GET['search'] ?? '';
                 <thead>
                     <tr>
                         <th>
-                            <a href="?<?= build_query_string(['sort_by' => 'id', 'sort_direction' => ($current_sort_by == 'id' && $current_sort_direction == 'asc') ? 'desc' : 'asc']) ?>">
+                            <a href="?<?= build_permission_query_string(['sort_by' => 'id', 'sort_direction' => ($current_sort_by == 'id' && $current_sort_direction == 'asc') ? 'desc' : 'asc']) ?>">
                                 ID
                                 <?php if ($current_sort_by == 'id') echo $current_sort_direction == 'asc' ? '<i class="bi bi-sort-up"></i>' : '<i class="bi bi-sort-down"></i>'; ?>
                             </a>
                         </th>
                         <th>
-                             <a href="?<?= build_query_string(['sort_by' => 'permission_name', 'sort_direction' => ($current_sort_by == 'permission_name' && $current_sort_direction == 'asc') ? 'desc' : 'asc']) ?>">
+                             <a href="?<?= build_permission_query_string(['sort_by' => 'permission_name', 'sort_direction' => ($current_sort_by == 'permission_name' && $current_sort_direction == 'asc') ? 'desc' : 'asc']) ?>">
                                 Permission Name
                                 <?php if ($current_sort_by == 'permission_name') echo $current_sort_direction == 'asc' ? '<i class="bi bi-sort-up"></i>' : '<i class="bi bi-sort-down"></i>'; ?>
                             </a>
@@ -97,31 +95,75 @@ $current_search = $_GET['search'] ?? '';
         </div>
     </div>
     <div class="card-footer">
-        <!-- Pagination -->
-        <?php if (!empty($pagination) && $pagination['total_pages'] > 1): ?>
-        <nav>
-            <ul class="pagination justify-content-center">
-                <?php if ($pagination['current_page'] > 1): ?>
-                    <li class="page-item"><a class="page-link" href="?<?= build_query_string(['page' => $pagination['current_page'] - 1]) ?>">Previous</a></li>
-                <?php endif; ?>
+        <!-- New Pagination and Rows Per Page Controls -->
+        <?php if (!empty($pagination) && $pagination['total_records'] > 0): ?>
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <form action="/permissions" method="GET" class="d-flex align-items-center">
+                    <input type="hidden" name="search" value="<?= htmlspecialchars($current_search) ?>">
+                    <input type="hidden" name="sort_by" value="<?= htmlspecialchars($current_sort_by) ?>">
+                    <input type="hidden" name="sort_direction" value="<?= htmlspecialchars($current_sort_direction) ?>">
+                    <label for="per_page" class="form-label me-2 mb-0">Rows:</label>
+                    <select name="per_page" id="per_page" class="form-select form-select-sm" style="width: auto;" onchange="this.form.submit()">
+                        <?php $per_page_options = [10, 25, 50, 100]; ?>
+                        <?php foreach ($per_page_options as $option): ?>
+                            <option value="<?= $option ?>" <?= ($current_per_page == $option) ? 'selected' : '' ?>><?= $option ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </form>
+            </div>
+            <div class="text-muted">
+                Showing <?= count($permissions) ?> of <?= $pagination['total_records'] ?> results
+            </div>
+            <div>
+                <?php
+                    $currentPage = $pagination['current_page'];
+                    $totalPages = $pagination['total_pages'];
+                ?>
+                <nav class="d-flex align-items-center">
+                    <ul class="pagination mb-0">
+                        <!-- First Page Button -->
+                        <li class="page-item <?= ($currentPage <= 1 ? 'disabled' : '') ?>">
+                            <a class="page-link" href="?<?= build_permission_query_string(['page' => 1]) ?>">&laquo; First</a>
+                        </li>
+                        <!-- Previous Button -->
+                        <li class="page-item <?= ($currentPage <= 1 ? 'disabled' : '') ?>">
+                            <a class="page-link" href="?<?= build_permission_query_string(['page' => $currentPage - 1]) ?>">Previous</a>
+                        </li>
+                    </ul>
+                    
+                    <!-- Page Dropdown Form -->
+                    <form action="/permissions" method="GET" class="d-flex align-items-center mx-2">
+                         <input type="hidden" name="search" value="<?= htmlspecialchars($current_search) ?>">
+                         <input type="hidden" name="sort_by" value="<?= htmlspecialchars($current_sort_by) ?>">
+                         <input type="hidden" name="sort_direction" value="<?= htmlspecialchars($current_sort_direction) ?>">
+                         <input type="hidden" name="per_page" value="<?= htmlspecialchars($current_per_page) ?>">
+                         <label for="page" class="form-label me-2 mb-0">Page:</label>
+                         <select name="page" id="page" class="form-select form-select-sm" style="width: auto;" onchange="this.form.submit()">
+                            <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                                <option value="<?= $i ?>" <?= ($currentPage == $i) ? 'selected' : '' ?>><?= $i ?></option>
+                            <?php endfor; ?>
+                         </select>
+                    </form>
 
-                <?php for ($i = 1; $i <= $pagination['total_pages']; $i++): ?>
-                    <li class="page-item <?= ($i == $pagination['current_page']) ? 'active' : '' ?>">
-                        <a class="page-link" href="?<?= build_query_string(['page' => $i]) ?>"><?= $i ?></a>
-                    </li>
-                <?php endfor; ?>
-
-                <?php if ($pagination['current_page'] < $pagination['total_pages']): ?>
-                    <li class="page-item"><a class="page-link" href="?<?= build_query_string(['page' => $pagination['current_page'] + 1]) ?>">Next</a></li>
-                <?php endif; ?>
-            </ul>
-        </nav>
+                     <ul class="pagination mb-0">
+                        <!-- Next Button -->
+                        <li class="page-item <?= ($currentPage >= $totalPages ? 'disabled' : '') ?>">
+                            <a class="page-link" href="?<?= build_permission_query_string(['page' => $currentPage + 1]) ?>">Next</a>
+                        </li>
+                        <!-- Last Page Button -->
+                        <li class="page-item <?= ($currentPage >= $totalPages ? 'disabled' : '') ?>">
+                            <a class="page-link" href="?<?= build_permission_query_string(['page' => $totalPages]) ?>">Last &raquo;</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
         <?php endif; ?>
     </div>
 </div>
 
 <!-- Modals (Create, Edit, Delete) -->
-<!-- Create Permission Modal -->
 <div class="modal fade" id="createPermissionModal" tabindex="-1" aria-labelledby="createPermissionModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -151,7 +193,6 @@ $current_search = $_GET['search'] ?? '';
   </div>
 </div>
 
-<!-- Edit Permission Modal -->
 <div class="modal fade" id="editPermissionModal" tabindex="-1" aria-labelledby="editPermissionModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -181,7 +222,6 @@ $current_search = $_GET['search'] ?? '';
   </div>
 </div>
 
-<!-- Delete Confirmation Modal -->
 <div class="modal fade" id="deletePermissionModal" tabindex="-1" aria-labelledby="deletePermissionModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">

@@ -45,14 +45,27 @@ class UserController {
 
 
     /**
-     * Display the list of users.
+     * Display the list of users with pagination.
      */
     public function list() {
         if (!$this->userModel->isLoggedIn()) {
             header('Location: /user/login');
             exit;
         }
-        $this->view('users/list', ['title' => 'Manage Users']);
+        
+        // Fetch users from the model, passing all GET parameters
+        $apiResponseJson = $this->userModel->getUsers($_GET);
+        $apiResponseData = json_decode($apiResponseJson, true);
+
+        // Prepare data for the view
+        $users = $apiResponseData['data'] ?? [];
+        $pagination = $apiResponseData['pagination'] ?? [];
+
+        $this->view('users/list', [
+            'title' => 'Manage Users',
+            'users' => $users,
+            'pagination' => $pagination
+        ]);
     }
 
     /**
@@ -65,20 +78,8 @@ class UserController {
     }
 
     /**
-     * Proxy for the DataTables API request.
+     * The usersApi method is no longer needed and has been removed.
      */
-    public function usersApi() {
-        if (!$this->userModel->isLoggedIn()) {
-            http_response_code(401);
-            echo json_encode(['status' => 'error', 'message' => 'Unauthorized']);
-            exit;
-        }
-        header('Content-Type: application/json');
-        // Forward query parameters from DataTables to the model
-        $response = $this->userModel->getUsers($_GET);
-        echo $response;
-    }
-
 
     /**
      * Loads a view file within the main layout.

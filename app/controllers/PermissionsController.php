@@ -18,7 +18,6 @@ class PermissionsController {
 
     /**
      * Display the permissions list page.
-     * This method now fetches data directly based on GET parameters.
      */
     public function index() {
          if (!$this->userModel->isLoggedIn()) {
@@ -26,15 +25,12 @@ class PermissionsController {
             exit;
         }
 
-        // Fetch permissions from the model, passing all GET parameters from the URL
         $apiResponseJson = $this->permissionModel->getPermissions($_GET);
         $apiResponseData = json_decode($apiResponseJson, true);
 
-        // Prepare data for the view
         $permissions = $apiResponseData['data'] ?? [];
         $pagination = $apiResponseData['pagination'] ?? [];
 
-        // Pass the data to the view
         $this->view('permissions/index', [
             'title' => 'Manage Permissions',
             'permissions' => $permissions,
@@ -43,10 +39,8 @@ class PermissionsController {
     }
 
     /**
-     * The permissionsApi method is no longer needed for client-side pagination
-     * and has been removed.
+     * Handle the creation of a new permission from the modal (AJAX).
      */
-
     public function create() {
         if (!$this->userModel->isLoggedIn() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
             http_response_code(403);
@@ -56,6 +50,7 @@ class PermissionsController {
 
         header('Content-Type: application/json');
         $data = json_decode(file_get_contents('php://input'), true);
+
         $name = $data['permission_name'] ?? '';
         $description = $data['description'] ?? '';
 
@@ -68,6 +63,7 @@ class PermissionsController {
         $response = $this->permissionModel->createPermission($name, $description);
         echo json_encode($response);
     }
+
 
     public function update() {
         if (!$this->userModel->isLoggedIn() || $_SERVER['REQUEST_METHOD'] !== 'POST') {

@@ -74,6 +74,8 @@ class UserController {
             'email' => $_POST['email'] ?? '',
             'password' => $_POST['password'] ?? '',
             'password_confirmation' => $_POST['password_confirmation'] ?? '',
+            'firstname' => $_POST['firstname'] ?? '', // Added
+            'lastname' => $_POST['lastname'] ?? '',   // Added
             'role_id' => $_POST['role_id'] ?? null
         ];
 
@@ -138,6 +140,8 @@ class UserController {
         $userData = [
             'username' => $_POST['username'] ?? '',
             'email' => $_POST['email'] ?? '',
+            'firstname' => $_POST['firstname'] ?? '', // Added
+            'lastname' => $_POST['lastname'] ?? '',   // Added
             'role_id' => $_POST['role_id'] ?? null
         ];
 
@@ -193,9 +197,7 @@ class UserController {
     }
 
     public function logout() {
-        error_log("[LOGOUT] Attempting to log out user.");
         $this->userModel->logout();
-        error_log("[LOGOUT] Session destroyed. Now attempting to redirect.");
         header('Location: /user/login');
         exit;
     }

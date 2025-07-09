@@ -12,6 +12,9 @@ $current_sort_direction = $_GET['sort_direction'] ?? 'asc';
 $current_search = $_GET['search'] ?? '';
 $current_per_page = $_GET['per_page'] ?? 10;
 
+$success_message = $_SESSION['success_message'] ?? null;
+unset($_SESSION['success_message']);
+
 ?>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -25,6 +28,13 @@ $current_per_page = $_GET['per_page'] ?? 10;
         </a>
     </div>
 </div>
+
+<?php if ($success_message): ?>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <?= htmlspecialchars($success_message) ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<?php endif; ?>
 
 <!-- Search Form -->
 <div class="card mb-4">
@@ -106,9 +116,63 @@ $current_per_page = $_GET['per_page'] ?? 10;
         </div>
     </div>
     <div class="card-footer">
-        <!-- Pagination Controls -->
+        <!-- Standard Pagination Controls -->
         <?php if (!empty($pagination) && $pagination['total_records'] > 0): ?>
-             <!-- Pagination logic remains the same -->
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <form action="/user/list" method="GET" class="d-flex align-items-center">
+                    <input type="hidden" name="search" value="<?= htmlspecialchars($current_search) ?>">
+                    <input type="hidden" name="sort_by" value="<?= htmlspecialchars($current_sort_by) ?>">
+                    <input type="hidden" name="sort_direction" value="<?= htmlspecialchars($current_sort_direction) ?>">
+                    <label for="per_page" class="form-label me-2 mb-0">Rows:</label>
+                    <select name="per_page" id="per_page" class="form-select form-select-sm" style="width: auto;" onchange="this.form.submit()">
+                        <?php $per_page_options = [10, 25, 50, 100]; ?>
+                        <?php foreach ($per_page_options as $option): ?>
+                            <option value="<?= $option ?>" <?= ($current_per_page == $option) ? 'selected' : '' ?>><?= $option ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </form>
+            </div>
+            <div class="text-muted">
+                Showing <?= count($users) ?> of <?= $pagination['total_records'] ?> results
+            </div>
+            <div>
+                <?php
+                    $currentPage = $pagination['current_page'];
+                    $totalPages = $pagination['total_pages'];
+                ?>
+                <nav class="d-flex align-items-center">
+                    <ul class="pagination mb-0">
+                        <li class="page-item <?= ($currentPage <= 1 ? 'disabled' : '') ?>">
+                            <a class="page-link" href="?<?= build_user_query_string(['page' => 1]) ?>">&laquo; First</a>
+                        </li>
+                        <li class="page-item <?= ($currentPage <= 1 ? 'disabled' : '') ?>">
+                            <a class="page-link" href="?<?= build_user_query_string(['page' => $currentPage - 1]) ?>">Previous</a>
+                        </li>
+                    </ul>
+                    <form action="/user/list" method="GET" class="d-flex align-items-center mx-2">
+                         <input type="hidden" name="search" value="<?= htmlspecialchars($current_search) ?>">
+                         <input type="hidden" name="sort_by" value="<?= htmlspecialchars($current_sort_by) ?>">
+                         <input type="hidden" name="sort_direction" value="<?= htmlspecialchars($current_sort_direction) ?>">
+                         <input type="hidden" name="per_page" value="<?= htmlspecialchars($current_per_page) ?>">
+                         <label for="page" class="form-label me-2 mb-0">Page:</label>
+                         <select name="page" id="page" class="form-select form-select-sm" style="width: auto;" onchange="this.form.submit()">
+                            <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                                <option value="<?= $i ?>" <?= ($currentPage == $i) ? 'selected' : '' ?>><?= $i ?></option>
+                            <?php endfor; ?>
+                         </select>
+                    </form>
+                     <ul class="pagination mb-0">
+                        <li class="page-item <?= ($currentPage >= $totalPages ? 'disabled' : '') ?>">
+                            <a class="page-link" href="?<?= build_user_query_string(['page' => $currentPage + 1]) ?>">Next</a>
+                        </li>
+                        <li class="page-item <?= ($currentPage >= $totalPages ? 'disabled' : '') ?>">
+                            <a class="page-link" href="?<?= build_user_query_string(['page' => $totalPages]) ?>">Last &raquo;</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
         <?php endif; ?>
     </div>
 </div>

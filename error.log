@@ -16,3 +16,6 @@
 [09-Jul-2025 08:51:39 Asia/Manila] [VIEW] Preparing to load layout file: D:\xampp\htdocs\openoffice\op-fe/app/views/layouts/main.php
 [09-Jul-2025 08:51:39 Asia/Manila] [VIEW] Layout file found. Requiring it now.
 [09-Jul-2025 08:51:39 Asia/Manila] [VIEW] Finished requiring layout file.
+[09-Jul-2025 09:12:19 Asia/Manila] Routing Error: Method 'edit' Not Found in Controller 'RolesController'
+[09-Jul-2025 09:12:26 Asia/Manila] Routing Error: Method 'create' Not Found in Controller 'RolesController'
+[09-Jul-2025 09:13:25 Asia/Manila] Routing Error: Method 'create' Not Found in Controller 'RolesController'

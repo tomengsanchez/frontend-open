@@ -18,11 +18,12 @@ class ApiHelper {
 
         if ($requiresAuth) {
             if (!isset($_SESSION['jwt_token'])) {
-                return ['http_code' => 401, 'body' => json_encode(['status' => 'error', 'message' => 'Unauthorized: No token found in session.'])];
+                return ['http_code' => 401, 'body' => json_encode(['status' => 'error', 'message' => 'Unauthorized: No token found.'])];
             }
             $headers[] = 'Authorization: Bearer ' . $_SESSION['jwt_token'];
         }
         
+        // For GET requests, append data as query string
         if ($method === 'GET' && !empty($data)) {
             $url .= '?' . http_build_query($data);
         }
@@ -35,6 +36,7 @@ class ApiHelper {
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_TIMEOUT, 10);
 
+        // For POST/PUT requests, send data in the body
         if (in_array($method, ['POST', 'PUT', 'DELETE']) && $data) {
             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
         }
@@ -50,11 +52,18 @@ class ApiHelper {
 
         curl_close($ch);
 
-        // MODIFICATION: We no longer automatically destroy the session here.
-        // The frontend JavaScript will handle the 401 redirect.
-        // This helps prevent unexpected logouts during background requests.
+        // --- GLOBAL 401 ERROR HANDLING ---
+        // If the API returns a 401 error, it means the token is invalid or expired.
+        // We will treat this as a global logout event to prevent inconsistent states.
+        if ($http_code == 401 && $requiresAuth) {
+            // Clear all session data
+            session_unset();
+            session_destroy();
+            // Redirect to the login page
+            header('Location: /user/login');
+            exit;
+        }
         
         return ['http_code' => $http_code, 'body' => $body];
     }
 }
-?>

@@ -1,15 +1,12 @@
 <?php
 // app/views/users/list.php
 
-// Helper function to build query strings for sorting and pagination links
 function build_user_query_string($new_params) {
     $current_params = $_GET;
-    // When changing page, we don't need to resubmit the per_page value unless it's different from default
     $merged_params = array_merge($current_params, $new_params);
     return http_build_query($merged_params);
 }
 
-// Determine current sort parameters for active link styling
 $current_sort_by = $_GET['sort_by'] ?? 'id';
 $current_sort_direction = $_GET['sort_direction'] ?? 'asc';
 $current_search = $_GET['search'] ?? '';
@@ -23,9 +20,9 @@ $current_per_page = $_GET['per_page'] ?? 10;
         <p>From this page, you can manage all system users.</p>
     </div>
     <div>
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createUserModal">
+        <a href="/user/create" class="btn btn-primary">
             <i class="bi bi-plus-circle me-2"></i>Create User
-        </button>
+        </a>
     </div>
 </div>
 

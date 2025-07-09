@@ -1,33 +1,108 @@
 <?php
 // app/controllers/UserController.php
 
-// Require the helper first, as the model depends on it.
 require_once BASE_PATH . '/app/helpers/ApiHelper.php';
 require_once BASE_PATH . '/app/models/UserModel.php';
+require_once BASE_PATH . '/app/models/RoleModel.php'; // Required to get roles for the dropdown
 
 class UserController {
 
     private $userModel;
+    private $roleModel; // Added
 
     public function __construct() {
         $this->userModel = new UserModel();
+        $this->roleModel = new RoleModel(); // Added
+    }
+
+    public function list() {
+        if (!$this->userModel->isLoggedIn()) {
+            header('Location: /user/login');
+            exit;
+        }
+        
+        $apiResponseJson = $this->userModel->getUsers($_GET);
+        $apiResponseData = json_decode($apiResponseJson, true);
+
+        $users = $apiResponseData['data'] ?? [];
+        $pagination = $apiResponseData['pagination'] ?? [];
+
+        $this->view('users/list', [
+            'title' => 'Manage Users',
+            'users' => $users,
+            'pagination' => $pagination
+        ]);
     }
 
     /**
-     * Display the login page or redirect to dashboard if already logged in.
+     * Show the form for creating a new user.
      */
+    public function create() {
+        if (!$this->userModel->isLoggedIn()) {
+            header('Location: /user/login');
+            exit;
+        }
+
+        // Fetch all available roles for the dropdown
+        $rolesData = $this->roleModel->getAllRoles();
+        $roles = $rolesData['data'] ?? [];
+
+        $this->view('users/create', [
+            'title' => 'Create New User',
+            'roles' => $roles
+        ]);
+    }
+
+    /**
+     * Store a newly created user in the database.
+     */
+    public function store() {
+        if (!$this->userModel->isLoggedIn() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(403);
+            exit("Forbidden");
+        }
+
+        $userData = [
+            'username' => $_POST['username'] ?? '',
+            'email' => $_POST['email'] ?? '',
+            'password' => $_POST['password'] ?? '',
+            'password_confirmation' => $_POST['password_confirmation'] ?? '',
+            'role_id' => $_POST['role_id'] ?? null
+        ];
+
+        // Basic validation
+        if (empty($userData['username']) || empty($userData['email']) || empty($userData['password'])) {
+            $_SESSION['error_message'] = 'Username, Email, and Password are required.';
+            header('Location: /user/create');
+            exit;
+        }
+        if ($userData['password'] !== $userData['password_confirmation']) {
+            $_SESSION['error_message'] = 'Passwords do not match.';
+            header('Location: /user/create');
+            exit;
+        }
+
+        $response = $this->userModel->createUser($userData);
+
+        if (isset($response['status']) && $response['status'] === 'success') {
+            $_SESSION['success_message'] = 'User created successfully!';
+            header('Location: /user/list');
+        } else {
+            $_SESSION['error_message'] = $response['message'] ?? 'An unknown error occurred.';
+            header('Location: /user/create');
+        }
+        exit;
+    }
+
+
     public function login() {
         if ($this->userModel->isLoggedIn()) {
             header('Location: /dashboard');
             exit;
         }
-        // This will render the login form without the main layout
         require_once BASE_PATH . '/app/views/auth/login.php';
     }
 
-    /**
-     * Handle the login form submission via AJAX.
-     */
     public function handleLogin() {
         header('Content-Type: application/json');
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -43,54 +118,14 @@ class UserController {
         }
     }
 
-
-    /**
-     * Display the list of users with pagination.
-     */
-    public function list() {
-        if (!$this->userModel->isLoggedIn()) {
-            header('Location: /user/login');
-            exit;
-        }
-        
-        // Fetch users from the model, passing all GET parameters
-        $apiResponseJson = $this->userModel->getUsers($_GET);
-        $apiResponseData = json_decode($apiResponseJson, true);
-
-        // Prepare data for the view
-        $users = $apiResponseData['data'] ?? [];
-        $pagination = $apiResponseData['pagination'] ?? [];
-
-        $this->view('users/list', [
-            'title' => 'Manage Users',
-            'users' => $users,
-            'pagination' => $pagination
-        ]);
-    }
-
-    /**
-     * Handle logout.
-     */
     public function logout() {
         $this->userModel->logout();
         header('Location: /user/login');
         exit;
     }
 
-    /**
-     * The usersApi method is no longer needed and has been removed.
-     */
-
-    /**
-     * Loads a view file within the main layout.
-     *
-     * @param string $viewName The name of the view file (e.g., 'users/list')
-     * @param array $data Data to be extracted for the view
-     */
     protected function view($viewName, $data = []) {
         extract($data);
-        // This loads the main layout, which in turn will include the specific view
         require_once BASE_PATH . '/app/views/layouts/main.php';
     }
 }
-?>

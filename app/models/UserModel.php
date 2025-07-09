@@ -8,28 +8,42 @@ class UserModel {
     }
 
     public function login($username, $password) {
-        $payload = json_encode(['username' => $username, 'password' => $password]);
-        $response = $this->make_curl_request(API_URL . '/login', 'POST', $payload);
-
+        $payload = ['username' => $username, 'password' => $password];
+        $response = ApiHelper::request('/login', 'POST', $payload);
         $data = json_decode($response['body'], true);
 
-        if (is_array($data) && $data['status'] === 'success' && isset($data['data']['token'])) {
+        if ($response['http_code'] === 200 && $data['status'] === 'success') {
             $_SESSION['jwt_token'] = $data['data']['token'];
             $_SESSION['user_logged_in'] = true;
             return ['status' => 'success'];
         }
-
-        return $data; // Return the original error response from API
+        return $data;
     }
     
+    public function createUser($userData) {
+        $response = ApiHelper::request('/settings/users', 'POST', $userData, true);
+        return json_decode($response['body'], true);
+    }
+
     /**
-     * Creates a new user via the API.
+     * Fetches a single user by their ID from the API.
+     * @param int $id The ID of the user.
+     * @return array The decoded JSON response from the API.
+     */
+    public function getUserById($id) {
+        $response = ApiHelper::request("/settings/users/{$id}", 'GET', null, true);
+        return json_decode($response['body'], true);
+    }
+
+    /**
+     * Updates an existing user via the API.
+     * @param int $id The ID of the user to update.
      * @param array $userData The user data from the form.
      * @return array The decoded JSON response from the API.
      */
-    public function createUser($userData) {
-        // Assuming the API endpoint is /settings/users
-        $response = ApiHelper::request('/settings/users', 'POST', $userData, true);
+    public function updateUser($id, $userData) {
+        // Assuming the API uses a PUT request for updates
+        $response = ApiHelper::request("/settings/users/{$id}", 'PUT', $userData, true);
         return json_decode($response['body'], true);
     }
 
@@ -39,52 +53,9 @@ class UserModel {
     }
 
     public function getUsers($params) {
-        if (!isset($_SESSION['jwt_token'])) {
-            return json_encode(['status' => 'error', 'message' => 'Unauthorized']);
-        }
-
-        $headers = [
-            'Authorization: Bearer ' . $_SESSION['jwt_token'],
-            'Content-Type: application/json'
-        ];
-        
-        $query_string = http_build_query($params);
-        $full_api_url = API_URL . '/settings/users?' . $query_string;
-
-        $response = $this->make_curl_request($full_api_url, 'GET', null, $headers);
-        
-        if ($response['http_code'] == 401) {
-            $this->logout();
-        }
-
+        $response = ApiHelper::request('/settings/users', 'GET', $params, true);
         return $response['body'];
     }
 
-
-    private function make_curl_request($url, $method, $data = null, $headers = ['Content-Type: application/json']) {
-        $ch = curl_init();
-
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-
-        if ($data) {
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-        }
-
-        $body = curl_exec($ch);
-        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-        if (curl_errno($ch)) {
-            $error_body = json_encode(['status' => 'error', 'message' => 'Proxy cURL Error: ' . curl_error($ch)]);
-            curl_close($ch);
-            return ['http_code' => 500, 'body' => $error_body];
-        }
-
-        curl_close($ch);
-        return ['http_code' => $http_code, 'body' => $body];
-    }
+    // The make_curl_request method is no longer needed here as it's in ApiHelper
 }
-?>

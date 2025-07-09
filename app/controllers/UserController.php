@@ -34,16 +34,12 @@ class UserController {
         ]);
     }
 
-    /**
-     * Show the form for creating a new user.
-     */
     public function create() {
         if (!$this->userModel->isLoggedIn()) {
             header('Location: /user/login');
             exit;
         }
 
-        // Fetch all available roles for the dropdown
         $rolesData = $this->roleModel->getAllRoles();
         $roles = $rolesData['data'] ?? [];
 
@@ -53,9 +49,6 @@ class UserController {
         ]);
     }
 
-    /**
-     * Store a newly created user in the database.
-     */
     public function store() {
         if (!$this->userModel->isLoggedIn() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
             http_response_code(403);
@@ -70,7 +63,6 @@ class UserController {
             'role_id' => $_POST['role_id'] ?? null
         ];
 
-        // Basic validation
         if (empty($userData['username']) || empty($userData['email']) || empty($userData['password'])) {
             $_SESSION['error_message'] = 'Username, Email, and Password are required.';
             header('Location: /user/create');
@@ -90,6 +82,81 @@ class UserController {
         } else {
             $_SESSION['error_message'] = $response['message'] ?? 'An unknown error occurred.';
             header('Location: /user/create');
+        }
+        exit;
+    }
+
+    /**
+     * Show the form for editing an existing user.
+     * @param int $id The ID of the user to edit.
+     */
+    public function edit($id) {
+        if (!$this->userModel->isLoggedIn()) {
+            header('Location: /user/login');
+            exit;
+        }
+
+        // Fetch the specific user's details
+        $userData = $this->userModel->getUserById($id);
+        if (!$userData || !isset($userData['data'])) {
+            $_SESSION['error_message'] = 'User not found.';
+            header('Location: /user/list');
+            exit;
+        }
+        $user = $userData['data'];
+
+        // Fetch all available roles for the dropdown
+        $rolesData = $this->roleModel->getAllRoles();
+        $roles = $rolesData['data'] ?? [];
+
+        $this->view('users/edit', [
+            'title' => 'Edit User',
+            'user' => $user,
+            'roles' => $roles
+        ]);
+    }
+
+    /**
+     * Update an existing user in the database.
+     */
+    public function update() {
+        if (!$this->userModel->isLoggedIn() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(403);
+            exit("Forbidden");
+        }
+
+        $id = $_POST['id'] ?? 0;
+        $userData = [
+            'username' => $_POST['username'] ?? '',
+            'email' => $_POST['email'] ?? '',
+            'role_id' => $_POST['role_id'] ?? null
+        ];
+
+        // Conditionally add password to the update payload if it's provided
+        if (!empty($_POST['password'])) {
+            if ($_POST['password'] !== $_POST['password_confirmation']) {
+                $_SESSION['error_message'] = 'Passwords do not match.';
+                header('Location: /user/edit/' . $id);
+                exit;
+            }
+            $userData['password'] = $_POST['password'];
+            $userData['password_confirmation'] = $_POST['password_confirmation'];
+        }
+
+        if (empty($id) || empty($userData['username']) || empty($userData['email'])) {
+            $_SESSION['error_message'] = 'User ID, Username, and Email are required.';
+            header('Location: /user/edit/' . $id);
+            exit;
+        }
+
+        $response = $this->userModel->updateUser($id, $userData);
+
+        if (isset($response['status']) && $response['status'] === 'success') {
+            $_SESSION['success_message'] = 'User updated successfully!';
+            header('Location: /user/list');
+        } else {
+            $_SESSION['error_message'] = $response['message'] ?? 'An unknown error occurred during update.';
+            header('Location: /user/edit/' . $id);
         }
         exit;
     }

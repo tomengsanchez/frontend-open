@@ -39,6 +39,7 @@ unset($_SESSION['success_message']); // Clear message after displaying
     </div>
 <?php endif; ?>
 
+<!-- Search Form -->
 <div class="card mb-4">
     <div class="card-body">
         <form action="/permissions" method="GET" class="d-flex">
@@ -88,7 +89,6 @@ unset($_SESSION['success_message']); // Clear message after displaying
                                     <a href="/permissions/edit/<?= $permission['id'] ?>" class="btn btn-sm btn-info">
                                         <i class="bi bi-pencil-square"></i>
                                     </a>
-                                    
                                     <?php $permissionJson = htmlspecialchars(json_encode($permission), ENT_QUOTES, 'UTF-8'); ?>
                                     <button class="btn btn-sm btn-danger delete-btn" data-permission='<?= $permissionJson ?>'>
                                         <i class="bi bi-trash"></i>
@@ -106,11 +106,68 @@ unset($_SESSION['success_message']); // Clear message after displaying
         </div>
     </div>
     <div class="card-footer">
+        <!-- Standard Pagination Controls -->
         <?php if (!empty($pagination) && $pagination['total_records'] > 0): ?>
-            <?php endif; ?>
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <form action="/permissions" method="GET" class="d-flex align-items-center">
+                    <input type="hidden" name="search" value="<?= htmlspecialchars($current_search) ?>">
+                    <input type="hidden" name="sort_by" value="<?= htmlspecialchars($current_sort_by) ?>">
+                    <input type="hidden" name="sort_direction" value="<?= htmlspecialchars($current_sort_direction) ?>">
+                    <label for="per_page" class="form-label me-2 mb-0">Rows:</label>
+                    <select name="per_page" id="per_page" class="form-select form-select-sm" style="width: auto;" onchange="this.form.submit()">
+                        <?php $per_page_options = [10, 25, 50, 100]; ?>
+                        <?php foreach ($per_page_options as $option): ?>
+                            <option value="<?= $option ?>" <?= ($current_per_page == $option) ? 'selected' : '' ?>><?= $option ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </form>
+            </div>
+            <div class="text-muted">
+                Showing <?= count($permissions) ?> of <?= $pagination['total_records'] ?> results
+            </div>
+            <div>
+                <?php
+                    $currentPage = $pagination['current_page'];
+                    $totalPages = $pagination['total_pages'];
+                ?>
+                <nav class="d-flex align-items-center">
+                    <ul class="pagination mb-0">
+                        <li class="page-item <?= ($currentPage <= 1 ? 'disabled' : '') ?>">
+                            <a class="page-link" href="?<?= build_permission_query_string(['page' => 1]) ?>">&laquo; First</a>
+                        </li>
+                        <li class="page-item <?= ($currentPage <= 1 ? 'disabled' : '') ?>">
+                            <a class="page-link" href="?<?= build_permission_query_string(['page' => $currentPage - 1]) ?>">Previous</a>
+                        </li>
+                    </ul>
+                    <form action="/permissions" method="GET" class="d-flex align-items-center mx-2">
+                         <input type="hidden" name="search" value="<?= htmlspecialchars($current_search) ?>">
+                         <input type="hidden" name="sort_by" value="<?= htmlspecialchars($current_sort_by) ?>">
+                         <input type="hidden" name="sort_direction" value="<?= htmlspecialchars($current_sort_direction) ?>">
+                         <input type="hidden" name="per_page" value="<?= htmlspecialchars($current_per_page) ?>">
+                         <label for="page" class="form-label me-2 mb-0">Page:</label>
+                         <select name="page" id="page" class="form-select form-select-sm" style="width: auto;" onchange="this.form.submit()">
+                            <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                                <option value="<?= $i ?>" <?= ($currentPage == $i) ? 'selected' : '' ?>><?= $i ?></option>
+                            <?php endfor; ?>
+                         </select>
+                    </form>
+                     <ul class="pagination mb-0">
+                        <li class="page-item <?= ($currentPage >= $totalPages ? 'disabled' : '') ?>">
+                            <a class="page-link" href="?<?= build_permission_query_string(['page' => $currentPage + 1]) ?>">Next</a>
+                        </li>
+                        <li class="page-item <?= ($currentPage >= $totalPages ? 'disabled' : '') ?>">
+                            <a class="page-link" href="?<?= build_permission_query_string(['page' => $totalPages]) ?>">Last &raquo;</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <?php endif; ?>
     </div>
 </div>
 
+<!-- Delete Confirmation Modal -->
 <div class="modal fade" id="deletePermissionModal" tabindex="-1" aria-labelledby="deletePermissionModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">

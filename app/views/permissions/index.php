@@ -39,7 +39,6 @@ unset($_SESSION['success_message']); // Clear message after displaying
     </div>
 <?php endif; ?>
 
-<!-- Search Form -->
 <div class="card mb-4">
     <div class="card-body">
         <form action="/permissions" method="GET" class="d-flex">
@@ -86,7 +85,6 @@ unset($_SESSION['success_message']); // Clear message after displaying
                                 <td><?= htmlspecialchars($permission['permission_name']) ?></td>
                                 <td><?= htmlspecialchars($permission['description']) ?></td>
                                 <td class="text-center">
-                                    <!-- Edit button is now a link -->
                                     <a href="/permissions/edit/<?= $permission['id'] ?>" class="btn btn-sm btn-info">
                                         <i class="bi bi-pencil-square"></i>
                                     </a>
@@ -108,14 +106,26 @@ unset($_SESSION['success_message']); // Clear message after displaying
         </div>
     </div>
     <div class="card-footer">
-        <!-- Pagination Controls -->
         <?php if (!empty($pagination) && $pagination['total_records'] > 0): ?>
-            <!-- Pagination logic remains the same -->
-        <?php endif; ?>
+            <?php endif; ?>
     </div>
 </div>
 
-<!-- Delete Modal is still needed -->
 <div class="modal fade" id="deletePermissionModal" tabindex="-1" aria-labelledby="deletePermissionModalLabel" aria-hidden="true">
-  <!-- ... modal content ... -->
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deletePermissionModalLabel">Confirm Deletion</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete this permission? This action cannot be undone.
+        <p class="text-danger fw-bold mt-2" id="permission-to-delete"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirm-delete-btn">Delete</button>
+      </div>
+    </div>
+  </div>
 </div>

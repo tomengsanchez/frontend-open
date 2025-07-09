@@ -141,9 +141,6 @@ class PermissionsController {
 
         $response = $this->permissionModel->updatePermission($id, $name, $description);
 
-        // Log the raw API response for debugging
-        error_log("[DEBUG] API Response for updatePermission({$id}): " . json_encode($response));
-
         if (isset($response['status']) && $response['status'] === 'success') {
             $_SESSION['success_message'] = 'Permission updated successfully!';
             header('Location: /permissions');

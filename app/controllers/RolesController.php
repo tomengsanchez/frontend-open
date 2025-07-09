@@ -67,7 +67,8 @@ class RolesController {
         }
 
         $roleName = $_POST['role_name'] ?? '';
-        $description = $_POST['role_description'] ?? '';
+        // FIX: Changed 'role_description' to 'description' to match the form input name.
+        $description = $_POST['description'] ?? ''; 
         $permissionIds = $_POST['permissions'] ?? []; 
 
         if (empty($roleName)) {
@@ -130,7 +131,8 @@ class RolesController {
 
         $id = $_POST['id'] ?? 0;
         $roleName = $_POST['role_name'] ?? '';
-        $description = $_POST['role_description'] ?? '';
+        // FIX: Changed 'role_description' to 'description' to match the form input name.
+        $description = $_POST['description'] ?? '';
         $permissionIds = $_POST['permissions'] ?? [];
 
         if (empty($id) || empty($roleName)) {
@@ -151,34 +153,31 @@ class RolesController {
         exit;
     }
 
-    /**
-     * Handle AJAX request to delete a role.
-     */
     public function delete() {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-           http_response_code(405);
-           echo json_encode(['status' => 'error', 'message' => 'Delete requires POST.']);
-           exit;
-       }
-       if (!$this->userModel->isLoggedIn()) {
-           http_response_code(403);
-           echo json_encode(['status' => 'error', 'message' => 'Forbidden: Not logged in.']);
-           exit;
-       }
+       if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+          http_response_code(405);
+          echo json_encode(['status' => 'error', 'message' => 'Delete requires POST.']);
+          exit;
+      }
+      if (!$this->userModel->isLoggedIn()) {
+          http_response_code(403);
+          echo json_encode(['status' => 'error', 'message' => 'Forbidden: Not logged in.']);
+          exit;
+      }
 
-       header('Content-Type: application/json');
-       $data = json_decode(file_get_contents('php://input'), true);
-       $id = $data['id'] ?? 0;
+      header('Content-Type: application/json');
+      $data = json_decode(file_get_contents('php://input'), true);
+      $id = $data['id'] ?? 0;
 
-       if (empty($id)) {
-           http_response_code(400);
-           echo json_encode(['status' => 'error', 'message' => 'Role ID is required for deletion.']);
-           exit;
-       }
+      if (empty($id)) {
+          http_response_code(400);
+          echo json_encode(['status' => 'error', 'message' => 'Role ID is required for deletion.']);
+          exit;
+      }
 
-       $response = $this->roleModel->deleteRole($id);
-       echo json_encode($response);
-   }
+      $response = $this->roleModel->deleteRole($id);
+      echo json_encode($response);
+  }
 
     protected function view($viewName, $data = []) {
         extract($data);

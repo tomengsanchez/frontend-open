@@ -1,0 +1,8 @@
+[09-Jul-2025 11:12:54 Asia/Manila] [CONTROLLER] Inside DashboardController->index()
+[09-Jul-2025 11:12:54 Asia/Manila] [CONTROLLER] User is NOT logged in. Redirecting to /user/login
+[09-Jul-2025 11:14:48 Asia/Manila] [CONTROLLER] Inside DashboardController->index()
+[09-Jul-2025 11:14:48 Asia/Manila] [CONTROLLER] User is logged in. Calling view method to render 'dashboard/index'.
+[09-Jul-2025 11:14:48 Asia/Manila] [VIEW] Inside view method for 'dashboard/index'.
+[09-Jul-2025 11:14:48 Asia/Manila] [VIEW] Preparing to load layout file: D:\xampp\htdocs\openoffice\op-fe/app/views/layouts/main.php
+[09-Jul-2025 11:14:48 Asia/Manila] [VIEW] Layout file found. Requiring it now.
+[09-Jul-2025 11:14:48 Asia/Manila] [VIEW] Finished requiring layout file.

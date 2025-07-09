@@ -3,7 +3,32 @@ $(document).ready(function() {
 
     // --- Login Form ---
     $('#login-form').on('submit', function(e) {
-        // ... login logic
+        // This prevents the default form submission which causes the page to reload.
+        e.preventDefault(); 
+        
+        const $form = $(this);
+        const $errorDiv = $('#login-error');
+
+        $.ajax({
+            url: '/user/handleLogin',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                username: $form.find('#username').val(),
+                password: $form.find('#password').val()
+            }),
+            success: function(response) {
+                if (response.status === 'success') {
+                    window.location.href = '/dashboard';
+                } else {
+                    $errorDiv.text(response.message || 'An unknown error occurred.').removeClass('hidden').show();
+                }
+            },
+            error: function(jqXHR) {
+                const msg = jqXHR.responseJSON?.message || 'An error occurred during login.';
+                $errorDiv.text(msg).removeClass('hidden').show();
+            }
+        });
     });
 
     // --- Permission Delete ---

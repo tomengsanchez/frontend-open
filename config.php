@@ -1,6 +1,6 @@
 <?php
 // config.php
-
+date_default_timezone_set('Asia/Manila');
 // --- URL Configuration ---
 define('BASE_URL', 'http://fe.openoffice.local');
 define('API_URL', 'http://api.openoffice.local');

@@ -102,7 +102,6 @@ class PermissionsController {
 
         $permissionResponse = $this->permissionModel->getPermissionById($id);
 
-        // Check for a successful response and the existence of the data key
         if (!$permissionResponse || (isset($permissionResponse['status']) && $permissionResponse['status'] === 'error') || !isset($permissionResponse['data'])) {
             $_SESSION['error_message'] = 'Permission not found or API error.';
             header('Location: /permissions');
@@ -141,6 +140,9 @@ class PermissionsController {
         }
 
         $response = $this->permissionModel->updatePermission($id, $name, $description);
+
+        // Log the raw API response for debugging
+        error_log("[DEBUG] API Response for updatePermission({$id}): " . json_encode($response));
 
         if (isset($response['status']) && $response['status'] === 'success') {
             $_SESSION['success_message'] = 'Permission updated successfully!';

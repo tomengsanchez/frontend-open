@@ -90,36 +90,66 @@ class PermissionsController {
         exit;
     }
 
-
     /**
-     * Handle AJAX request to update a permission.
+     * Show the form for editing a permission.
+     * @param int $id The ID of the permission to edit.
      */
-    public function update() {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-             http_response_code(405);
-             echo json_encode(['status' => 'error', 'message' => 'Update requires POST.']);
-             exit;
-        }
+    public function edit($id) {
         if (!$this->userModel->isLoggedIn()) {
-            http_response_code(403);
-            echo json_encode(['status' => 'error', 'message' => 'Forbidden: Not logged in.']);
+            header('Location: /user/login');
             exit;
         }
 
-        header('Content-Type: application/json');
-        $data = json_decode(file_get_contents('php://input'), true);
-        $id = $data['id'] ?? 0;
-        $name = $data['permission_name'] ?? '';
-        $description = $data['description'] ?? '';
+        $permissionResponse = $this->permissionModel->getPermissionById($id);
+
+        // Check for a successful response and the existence of the data key
+        if (!$permissionResponse || (isset($permissionResponse['status']) && $permissionResponse['status'] === 'error') || !isset($permissionResponse['data'])) {
+            $_SESSION['error_message'] = 'Permission not found or API error.';
+            header('Location: /permissions');
+            exit;
+        }
+
+        $this->view('permissions/edit', [
+            'title' => 'Edit Permission',
+            'permission' => $permissionResponse['data']
+        ]);
+    }
+
+    /**
+     * Update an existing permission in the database.
+     */
+    public function update() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo "This action requires a POST request.";
+            exit;
+        }
+        if (!$this->userModel->isLoggedIn()) {
+            http_response_code(403);
+            echo "Forbidden: You must be logged in.";
+            exit;
+        }
+
+        $id = $_POST['id'] ?? 0;
+        $name = $_POST['permission_name'] ?? '';
+        $description = $_POST['description'] ?? '';
 
         if (empty($id) || empty($name)) {
-            http_response_code(400);
-            echo json_encode(['status' => 'error', 'message' => 'ID and Permission name are required for update.']);
+            $_SESSION['error_message'] = 'ID and Permission name are required.';
+            header('Location: /permissions/edit/' . $id);
             exit;
         }
 
         $response = $this->permissionModel->updatePermission($id, $name, $description);
-        echo json_encode($response);
+
+        if (isset($response['status']) && $response['status'] === 'success') {
+            $_SESSION['success_message'] = 'Permission updated successfully!';
+            header('Location: /permissions');
+        } else {
+            $_SESSION['error_message'] = $response['message'] ?? 'An unknown error occurred during update.';
+            header('Location: /permissions/edit/' . $id);
+        }
+        exit;
     }
 
     /**

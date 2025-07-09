@@ -9,8 +9,7 @@ session_start();
 // Define the base path of the application
 define('BASE_PATH', __DIR__);
 
-// --- CORRECTED ROUTING LOGIC ---
-// Use parse_url to safely get the path part of the URL, leaving the query string intact for $_GET
+// Use parse_url to safely get the path part of the URL
 $request_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 // Get the directory where the script is running
@@ -25,20 +24,17 @@ if ($base_path !== '/' && strpos($request_path, $base_path) === 0) {
 }
 
 $route = trim($route, '/');
-// --- END CORRECTED ROUTING LOGIC ---
 
-
-// Default route if the URL is empty (e.g., http://fe.openoffice.local/)
+// Default route
 if (empty($route)) {
     $route = 'dashboard';
 }
 
-// Simple routing
+// Simple routing with parameters
 $parts = explode('/', $route);
-// Default to DashboardController if none is provided
 $controller_name = !empty($parts[0]) ? ucfirst($parts[0]) . 'Controller' : 'DashboardController';
-// Default to the 'index' method if none is provided
 $method_name = !empty($parts[1]) ? $parts[1] : 'index';
+$params = array_slice($parts, 2); // The rest of the URL parts are parameters
 
 $controller_file = BASE_PATH . '/app/controllers/' . $controller_name . '.php';
 
@@ -47,8 +43,8 @@ if (file_exists($controller_file)) {
     if (class_exists($controller_name)) {
         $controller = new $controller_name();
         if (method_exists($controller, $method_name)) {
-            // Call the controller method
-            $controller->$method_name();
+            // Call the controller method with parameters
+            call_user_func_array([$controller, $method_name], $params);
         } else {
             http_response_code(404);
             error_log("Routing Error: Method '{$method_name}' Not Found in Controller '{$controller_name}'");

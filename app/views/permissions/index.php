@@ -26,7 +26,6 @@ unset($_SESSION['success_message']); // Clear message after displaying
         <p>From this page, you can manage all system permissions.</p>
     </div>
     <div>
-        <!-- This is now a link to the create page -->
         <a href="/permissions/create" class="btn btn-primary">
             <i class="bi bi-plus-circle me-2"></i>Create Permission
         </a>
@@ -87,10 +86,12 @@ unset($_SESSION['success_message']); // Clear message after displaying
                                 <td><?= htmlspecialchars($permission['permission_name']) ?></td>
                                 <td><?= htmlspecialchars($permission['description']) ?></td>
                                 <td class="text-center">
-                                    <?php $permissionJson = htmlspecialchars(json_encode($permission), ENT_QUOTES, 'UTF-8'); ?>
-                                    <button class="btn btn-sm btn-info edit-btn" data-permission='<?= $permissionJson ?>'>
+                                    <!-- Edit button is now a link -->
+                                    <a href="/permissions/edit/<?= $permission['id'] ?>" class="btn btn-sm btn-info">
                                         <i class="bi bi-pencil-square"></i>
-                                    </button>
+                                    </a>
+                                    
+                                    <?php $permissionJson = htmlspecialchars(json_encode($permission), ENT_QUOTES, 'UTF-8'); ?>
                                     <button class="btn btn-sm btn-danger delete-btn" data-permission='<?= $permissionJson ?>'>
                                         <i class="bi bi-trash"></i>
                                     </button>
@@ -114,11 +115,7 @@ unset($_SESSION['success_message']); // Clear message after displaying
     </div>
 </div>
 
-<!-- Edit and Delete Modals still here for now -->
-<div class="modal fade" id="editPermissionModal" tabindex="-1" aria-labelledby="editPermissionModalLabel" aria-hidden="true">
-  <!-- ... modal content ... -->
-</div>
-
+<!-- Delete Modal is still needed -->
 <div class="modal fade" id="deletePermissionModal" tabindex="-1" aria-labelledby="deletePermissionModalLabel" aria-hidden="true">
   <!-- ... modal content ... -->
 </div>

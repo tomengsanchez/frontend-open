@@ -14,6 +14,16 @@ class PermissionModel {
     }
 
     /**
+     * Fetches a single permission by its ID from the API.
+     * @param int $id The ID of the permission.
+     * @return array The decoded JSON response from the API.
+     */
+    public function getPermissionById($id) {
+        $response = ApiHelper::request("/settings/permissions/{$id}", 'GET', null, true);
+        return json_decode($response['body'], true);
+    }
+
+    /**
      * Creates a new permission via the API.
      * @param string $name The name of the permission.
      * @param string $description The description of the permission.
@@ -56,4 +66,3 @@ class PermissionModel {
         return json_decode($response['body'], true);
     }
 }
-?>

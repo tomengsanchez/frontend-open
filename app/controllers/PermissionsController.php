@@ -1,6 +1,7 @@
 <?php
 // app/controllers/PermissionsController.php
 
+require_once BASE_PATH . '/app/helpers/AuthHelper.php';
 require_once BASE_PATH . '/app/helpers/ApiHelper.php';
 require_once BASE_PATH . '/app/models/PermissionModel.php';
 require_once BASE_PATH . '/app/models/UserModel.php';
@@ -16,11 +17,19 @@ class PermissionsController {
         $this->userModel = new UserModel();
     }
 
-    /**
-     * Display the permissions list page (handles GET requests).
-     */
+    private function checkAccess($permission) {
+        if (!AuthHelper::can($permission)) {
+            http_response_code(403);
+            // You can create a dedicated "access_denied" view later
+            exit("<h1>403 Forbidden</h1><p>You do not have permission to access this page.</p>");
+        }
+    }
+
     public function index() {
-         if (!$this->userModel->isLoggedIn()) {
+        // FIX: Changed to lowercase to match API standard
+        $this->checkAccess('permissions:index');
+        
+        if (!$this->userModel->isLoggedIn()) {
             header('Location: /user/login');
             exit;
         }
@@ -38,15 +47,10 @@ class PermissionsController {
         ]);
     }
 
-    /**
-     * Show the form for creating a new permission (handles GET requests).
-     */
     public function create() {
-        if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
-            http_response_code(405); // Method Not Allowed
-            echo "This page should only be accessed via GET.";
-            exit;
-        }
+        // FIX: Changed to lowercase
+        $this->checkAccess('permissions:create');
+        
         if (!$this->userModel->isLoggedIn()) {
             header('Location: /user/login');
             exit;
@@ -54,19 +58,13 @@ class PermissionsController {
         $this->view('permissions/create', ['title' => 'Create New Permission']);
     }
 
-    /**
-     * Store a newly created permission (handles POST requests).
-     */
     public function store() {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            http_response_code(405); // Method Not Allowed
-            echo "This action requires a POST request.";
-            exit;
-        }
-        if (!$this->userModel->isLoggedIn()) {
+        // FIX: Changed to lowercase
+        $this->checkAccess('permissions:create');
+        
+        if (!$this->userModel->isLoggedIn() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
             http_response_code(403);
-            echo "Forbidden: You must be logged in.";
-            exit;
+            exit("Forbidden");
         }
 
         $name = $_POST['permission_name'] ?? '';
@@ -84,17 +82,16 @@ class PermissionsController {
             $_SESSION['success_message'] = 'Permission created successfully!';
             header('Location: /permissions');
         } else {
-            $_SESSION['error_message'] = $response['message'] ?? 'An unknown error occurred during creation.';
+            $_SESSION['error_message'] = $response['message'] ?? 'An unknown error occurred.';
             header('Location: /permissions/create');
         }
         exit;
     }
 
-    /**
-     * Show the form for editing a permission.
-     * @param int $id The ID of the permission to edit.
-     */
     public function edit($id) {
+        // FIX: Changed to lowercase
+        $this->checkAccess('permissions:edit');
+        
         if (!$this->userModel->isLoggedIn()) {
             header('Location: /user/login');
             exit;
@@ -114,19 +111,13 @@ class PermissionsController {
         ]);
     }
 
-    /**
-     * Update an existing permission in the database.
-     */
     public function update() {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            http_response_code(405);
-            echo "This action requires a POST request.";
-            exit;
-        }
-        if (!$this->userModel->isLoggedIn()) {
+        // FIX: Changed to lowercase
+        $this->checkAccess('permissions:edit');
+        
+        if (!$this->userModel->isLoggedIn() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
             http_response_code(403);
-            echo "Forbidden: You must be logged in.";
-            exit;
+            exit("Forbidden");
         }
 
         $id = $_POST['id'] ?? 0;
@@ -151,33 +142,28 @@ class PermissionsController {
         exit;
     }
 
-    /**
-     * Handle AJAX request to delete a permission.
-     */
     public function delete() {
-         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            http_response_code(405);
-            echo json_encode(['status' => 'error', 'message' => 'Delete requires POST.']);
-            exit;
-        }
-        if (!$this->userModel->isLoggedIn()) {
-            http_response_code(403);
-            echo json_encode(['status' => 'error', 'message' => 'Forbidden: Not logged in.']);
-            exit;
-        }
+        // FIX: Changed to lowercase
+        $this->checkAccess('permissions:delete');
+        
+        if (!$this->userModel->isLoggedIn() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+           http_response_code(403);
+           echo json_encode(['status' => 'error', 'message' => 'Forbidden: Not logged in.']);
+           exit;
+       }
 
-        header('Content-Type: application/json');
-        $data = json_decode(file_get_contents('php://input'), true);
-        $id = $data['id'] ?? 0;
+       header('Content-Type: application/json');
+       $data = json_decode(file_get_contents('php://input'), true);
+       $id = $data['id'] ?? 0;
 
-        if (empty($id)) {
-            http_response_code(400);
-            echo json_encode(['status' => 'error', 'message' => 'Permission ID is required for deletion.']);
-            exit;
-        }
+       if (empty($id)) {
+           http_response_code(400);
+           echo json_encode(['status' => 'error', 'message' => 'Permission ID is required for deletion.']);
+           exit;
+       }
 
-        $response = $this->permissionModel->deletePermission($id);
-        echo json_encode($response);
+       $response = $this->permissionModel->deletePermission($id);
+       echo json_encode($response);
     }
 
 

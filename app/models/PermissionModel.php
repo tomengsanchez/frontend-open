@@ -4,35 +4,32 @@
 class PermissionModel {
 
     /**
-     * Fetches a paginated list of permissions from the API.
+     * Fetches the list of available routes and the user's permission for each.
+     * @return array The decoded JSON response from the API.
      */
+    public function getRoutes() {
+        $response = ApiHelper::request('/routes', 'GET', null, true);
+        return json_decode($response['body'], true);
+    }
+
+    // ... other methods remain the same ...
+
     public function getPermissions($params) {
         $response = ApiHelper::request('/settings/permissions', 'GET', $params, true);
         return $response['body'];
     }
     
-    /**
-     * Fetches the complete list of all permissions from the API.
-     */
     public function getAllPermissions() {
-        // We request a very large number per page to get all permissions.
-        // A better backend might have a dedicated /all endpoint.
         $params = ['per_page' => 1000]; 
         $response = ApiHelper::request('/settings/permissions', 'GET', $params, true);
         return json_decode($response['body'], true);
     }
 
-    /**
-     * Fetches a single permission by its ID from the API.
-     */
     public function getPermissionById($id) {
         $response = ApiHelper::request("/settings/permissions/{$id}", 'GET', null, true);
         return json_decode($response['body'], true);
     }
 
-    /**
-     * Creates a new permission via the API.
-     */
     public function createPermission($name, $description) {
         $payload = [
             'permission_name' => $name,
@@ -42,9 +39,6 @@ class PermissionModel {
         return json_decode($response['body'], true);
     }
 
-    /**
-     * Updates an existing permission via the API.
-     */
     public function updatePermission($id, $name, $description) {
         $payload = [
             'permission_name' => $name,
@@ -54,9 +48,6 @@ class PermissionModel {
         return json_decode($response['body'], true);
     }
 
-    /**
-     * Deletes a permission via the API.
-     */
     public function deletePermission($id) {
         $response = ApiHelper::request("/settings/permissions/{$id}", 'DELETE', null, true);
         return json_decode($response['body'], true);

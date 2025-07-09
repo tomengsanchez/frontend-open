@@ -9,14 +9,31 @@ class UserModel {
 
     public function login($username, $password) {
         $payload = ['username' => $username, 'password' => $password];
-        $response = ApiHelper::request('/login', 'POST', $payload);
+        $response = ApiHelper::request('/login', 'POST', $payload); 
         $data = json_decode($response['body'], true);
 
-        if ($response['http_code'] === 200 && $data['status'] === 'success') {
+        if ($response['http_code'] === 200 && isset($data['status']) && $data['status'] === 'success') {
             $_SESSION['jwt_token'] = $data['data']['token'];
             $_SESSION['user_logged_in'] = true;
+            
+            // Fetch all user routes/permissions.
+            $routesResponse = ApiHelper::request('/routes', 'GET', null, true);
+            
+            // --- DEBUGGING STEP ---
+            // Log the raw response from the /routes endpoint to see if it's successful.
+            error_log("[DEBUG] /routes API Response after login: " . $routesResponse['body']);
+            
+            $routesData = json_decode($routesResponse['body'], true);
+
+            if (isset($routesData['data'])) {
+                $_SESSION['user_routes'] = $routesData['data'];
+            } else {
+                $_SESSION['user_routes'] = []; 
+            }
+
             return ['status' => 'success'];
         }
+
         return $data;
     }
     
@@ -25,24 +42,12 @@ class UserModel {
         return json_decode($response['body'], true);
     }
 
-    /**
-     * Fetches a single user by their ID from the API.
-     * @param int $id The ID of the user.
-     * @return array The decoded JSON response from the API.
-     */
     public function getUserById($id) {
         $response = ApiHelper::request("/settings/users/{$id}", 'GET', null, true);
         return json_decode($response['body'], true);
     }
 
-    /**
-     * Updates an existing user via the API.
-     * @param int $id The ID of the user to update.
-     * @param array $userData The user data from the form.
-     * @return array The decoded JSON response from the API.
-     */
     public function updateUser($id, $userData) {
-        // Assuming the API uses a PUT request for updates
         $response = ApiHelper::request("/settings/users/{$id}", 'PUT', $userData, true);
         return json_decode($response['body'], true);
     }
@@ -56,6 +61,4 @@ class UserModel {
         $response = ApiHelper::request('/settings/users', 'GET', $params, true);
         return $response['body'];
     }
-
-    // The make_curl_request method is no longer needed here as it's in ApiHelper
 }

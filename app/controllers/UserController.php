@@ -1,21 +1,31 @@
 <?php
 // app/controllers/UserController.php
 
+require_once BASE_PATH . '/app/helpers/AuthHelper.php';
 require_once BASE_PATH . '/app/helpers/ApiHelper.php';
 require_once BASE_PATH . '/app/models/UserModel.php';
-require_once BASE_PATH . '/app/models/RoleModel.php'; // Required to get roles for the dropdown
+require_once BASE_PATH . '/app/models/RoleModel.php';
 
 class UserController {
 
     private $userModel;
-    private $roleModel; // Added
+    private $roleModel;
 
     public function __construct() {
         $this->userModel = new UserModel();
-        $this->roleModel = new RoleModel(); // Added
+        $this->roleModel = new RoleModel();
+    }
+
+    private function checkAccess($permission) {
+        if (!AuthHelper::can($permission)) {
+            http_response_code(403);
+            exit("<h1>403 Forbidden</h1><p>You do not have permission to access this page.</p>");
+        }
     }
 
     public function list() {
+        $this->checkAccess('users:index');
+
         if (!$this->userModel->isLoggedIn()) {
             header('Location: /user/login');
             exit;
@@ -35,6 +45,8 @@ class UserController {
     }
 
     public function create() {
+        $this->checkAccess('users:create');
+
         if (!$this->userModel->isLoggedIn()) {
             header('Location: /user/login');
             exit;
@@ -50,6 +62,8 @@ class UserController {
     }
 
     public function store() {
+        $this->checkAccess('users:create');
+
         if (!$this->userModel->isLoggedIn() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
             http_response_code(403);
             exit("Forbidden");
@@ -86,17 +100,14 @@ class UserController {
         exit;
     }
 
-    /**
-     * Show the form for editing an existing user.
-     * @param int $id The ID of the user to edit.
-     */
     public function edit($id) {
+        $this->checkAccess('users:edit');
+
         if (!$this->userModel->isLoggedIn()) {
             header('Location: /user/login');
             exit;
         }
 
-        // Fetch the specific user's details
         $userData = $this->userModel->getUserById($id);
         if (!$userData || !isset($userData['data'])) {
             $_SESSION['error_message'] = 'User not found.';
@@ -105,7 +116,6 @@ class UserController {
         }
         $user = $userData['data'];
 
-        // Fetch all available roles for the dropdown
         $rolesData = $this->roleModel->getAllRoles();
         $roles = $rolesData['data'] ?? [];
 
@@ -116,10 +126,9 @@ class UserController {
         ]);
     }
 
-    /**
-     * Update an existing user in the database.
-     */
     public function update() {
+        $this->checkAccess('users:edit');
+
         if (!$this->userModel->isLoggedIn() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
             http_response_code(403);
             exit("Forbidden");
@@ -132,7 +141,6 @@ class UserController {
             'role_id' => $_POST['role_id'] ?? null
         ];
 
-        // Conditionally add password to the update payload if it's provided
         if (!empty($_POST['password'])) {
             if ($_POST['password'] !== $_POST['password_confirmation']) {
                 $_SESSION['error_message'] = 'Passwords do not match.';
@@ -161,7 +169,6 @@ class UserController {
         exit;
     }
 
-
     public function login() {
         if ($this->userModel->isLoggedIn()) {
             header('Location: /dashboard');
@@ -186,7 +193,9 @@ class UserController {
     }
 
     public function logout() {
+        error_log("[LOGOUT] Attempting to log out user.");
         $this->userModel->logout();
+        error_log("[LOGOUT] Session destroyed. Now attempting to redirect.");
         header('Location: /user/login');
         exit;
     }

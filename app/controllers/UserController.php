@@ -74,8 +74,8 @@ class UserController {
             'email' => $_POST['email'] ?? '',
             'password' => $_POST['password'] ?? '',
             'password_confirmation' => $_POST['password_confirmation'] ?? '',
-            'firstname' => $_POST['firstname'] ?? '', // Added
-            'lastname' => $_POST['lastname'] ?? '',   // Added
+            'firstname' => $_POST['firstname'] ?? '',
+            'lastname' => $_POST['lastname'] ?? '',
             'role_id' => $_POST['role_id'] ?? null
         ];
 
@@ -140,8 +140,8 @@ class UserController {
         $userData = [
             'username' => $_POST['username'] ?? '',
             'email' => $_POST['email'] ?? '',
-            'firstname' => $_POST['firstname'] ?? '', // Added
-            'lastname' => $_POST['lastname'] ?? '',   // Added
+            'firstname' => $_POST['firstname'] ?? '',
+            'lastname' => $_POST['lastname'] ?? '',
             'role_id' => $_POST['role_id'] ?? null
         ];
 
@@ -172,6 +172,37 @@ class UserController {
         }
         exit;
     }
+
+    /**
+     * Handle AJAX request to delete a user.
+     */
+    public function delete() {
+        $this->checkAccess('users:delete');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+           http_response_code(405);
+           echo json_encode(['status' => 'error', 'message' => 'Delete requires POST.']);
+           exit;
+       }
+       if (!$this->userModel->isLoggedIn()) {
+           http_response_code(403);
+           echo json_encode(['status' => 'error', 'message' => 'Forbidden: Not logged in.']);
+           exit;
+       }
+
+       header('Content-Type: application/json');
+       $data = json_decode(file_get_contents('php://input'), true);
+       $id = $data['id'] ?? 0;
+
+       if (empty($id)) {
+           http_response_code(400);
+           echo json_encode(['status' => 'error', 'message' => 'User ID is required for deletion.']);
+           exit;
+       }
+
+       $response = $this->userModel->deleteUser($id);
+       echo json_encode($response);
+   }
 
     public function login() {
         if ($this->userModel->isLoggedIn()) {

@@ -3,9 +3,7 @@ $(document).ready(function() {
 
     // --- Login Form ---
     $('#login-form').on('submit', function(e) {
-        // This prevents the default form submission which causes the page to reload.
-        e.preventDefault(); 
-        
+        e.preventDefault();
         const $form = $(this);
         const $errorDiv = $('#login-error');
 
@@ -21,12 +19,12 @@ $(document).ready(function() {
                 if (response.status === 'success') {
                     window.location.href = '/dashboard';
                 } else {
-                    $errorDiv.text(response.message || 'An unknown error occurred.').removeClass('hidden').show();
+                    $errorDiv.text(response.message || 'An unknown error occurred.').removeClass('hidden');
                 }
             },
             error: function(jqXHR) {
                 const msg = jqXHR.responseJSON?.message || 'An error occurred during login.';
-                $errorDiv.text(msg).removeClass('hidden').show();
+                $errorDiv.text(msg).removeClass('hidden');
             }
         });
     });
@@ -89,10 +87,40 @@ $(document).ready(function() {
         });
     });
 
+    // --- User Delete ---
+    let userIdToDelete = null;
+    $('#users-table-body').on('click', '.delete-user-btn', function() {
+        userIdToDelete = $(this).data('user-id');
+        const userName = $(this).data('user-name');
+        $('#user-to-delete').text(`User: "${userName}" (ID: ${userIdToDelete})`);
+        $('#deleteUserModal').modal('show');
+    });
+
+    $('#confirm-user-delete-btn').on('click', function() {
+        if (!userIdToDelete) return;
+        $.ajax({
+            url: '/user/delete',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ id: userIdToDelete }),
+            success: function(response) {
+                if (response.status === 'success') {
+                    window.location.reload();
+                } else {
+                    alert('Error deleting user: ' + (response.message || 'Unknown error'));
+                }
+            },
+            error: function() {
+                alert('An unexpected error occurred while trying to delete the user.');
+            }
+        });
+    });
+
     // --- Modal Cleanup ---
     $('.modal').on('hidden.bs.modal', function () {
         permissionIdToDelete = null;
         roleIdToDelete = null;
+        userIdToDelete = null;
         $(this).find('.modal-body p.text-danger').text('');
     });
 });

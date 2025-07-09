@@ -31,34 +31,28 @@ class UserModel {
         return $data;
     }
     
-    /**
-     * Creates a new user via the API.
-     * @param array $userData The user data from the form.
-     * @return array The decoded JSON response from the API.
-     */
     public function createUser($userData) {
         $response = ApiHelper::request('/settings/users', 'POST', $userData, true);
         return json_decode($response['body'], true);
     }
 
-    /**
-     * Fetches a single user by their ID from the API.
-     * @param int $id The ID of the user.
-     * @return array The decoded JSON response from the API.
-     */
     public function getUserById($id) {
         $response = ApiHelper::request("/settings/users/{$id}", 'GET', null, true);
         return json_decode($response['body'], true);
     }
 
-    /**
-     * Updates an existing user via the API.
-     * @param int $id The ID of the user to update.
-     * @param array $userData The user data from the form.
-     * @return array The decoded JSON response from the API.
-     */
     public function updateUser($id, $userData) {
         $response = ApiHelper::request("/settings/users/{$id}", 'PUT', $userData, true);
+        return json_decode($response['body'], true);
+    }
+
+    /**
+     * Deletes a user via the API.
+     * @param int $id The ID of the user to delete.
+     * @return array The decoded JSON response from the API.
+     */
+    public function deleteUser($id) {
+        $response = ApiHelper::request("/settings/users/{$id}", 'DELETE', null, true);
         return json_decode($response['body'], true);
     }
 
